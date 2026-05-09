@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SLICK - Queue</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800&amp;family=Inter:wght@300;400&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#d0bcff",
+                        "tertiary-fixed-dim": "#4ae176",
+                        "background": "#131313",
+                        "secondary-fixed": "#e9ddff",
+                        "error": "#ffb4ab",
+                        "on-secondary-container": "#c4abff",
+                        "primary-container": "#f59e0b",
+                        "on-primary": "#472a00",
+                        "inverse-surface": "#e5e2e1",
+                        "surface": "#131313",
+                        "primary-fixed": "#ffddb8",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "on-surface-variant": "#d8c3ad",
+                        "on-primary-fixed": "#2a1700",
+                        "inverse-on-surface": "#313030",
+                        "on-surface": "#e5e2e1",
+                        "tertiary-container": "#2bca62",
+                        "on-primary-fixed-variant": "#653e00",
+                        "secondary-container": "#571bc1",
+                        "on-tertiary-fixed": "#002109",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-high": "#2a2a2a",
+                        "error-container": "#93000a",
+                        "surface-bright": "#3a3939",
+                        "inverse-primary": "#855300",
+                        "surface-tint": "#ffb95f",
+                        "on-secondary": "#3c0091",
+                        "on-error-container": "#ffdad6",
+                        "primary-fixed-dim": "#ffb95f",
+                        "surface-variant": "#353534",
+                        "on-primary-container": "#613b00",
+                        "primary": "#ffc174",
+                        "outline": "#a08e7a",
+                        "on-error": "#690005",
+                        "tertiary-fixed": "#6bff8f",
+                        "on-background": "#e5e2e1",
+                        "tertiary": "#51e77b",
+                        "on-tertiary-container": "#004f20",
+                        "surface-container-low": "#1c1b1b",
+                        "on-tertiary": "#003915",
+                        "on-secondary-fixed": "#23005c",
+                        "surface-container": "#201f1f",
+                        "on-tertiary-fixed-variant": "#005321",
+                        "secondary": "#d0bcff",
+                        "outline-variant": "#534434",
+                        "surface-container-highest": "#353534",
+                        "surface-dim": "#131313"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "margin": "32px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "mono-label": ["JetBrains Mono"],
+                        "headline-lg": ["Epilogue"],
+                        "display-lg": ["Epilogue"],
+                        "headline-lg-mobile": ["Epilogue"],
+                        "mono-data": ["JetBrains Mono"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "300" }],
+                        "mono-label": ["12px", { "lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "headline-lg": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-lg": ["72px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "800" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "mono-data": ["14px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-card {
+            background-color: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid transparent;
+            border-image: linear-gradient(to bottom right, rgba(255,255,255,0.1), rgba(255,255,255,0.02)) 1;
+        }
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        .glow-amber {
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.15);
+        }
+        .glow-green {
+            box-shadow: 0 0 30px rgba(107, 255, 143, 0.15);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-[#0a0a0a] text-on-surface min-h-screen font-body-md antialiased selection:bg-primary-container selection:text-on-primary">
+<div class="grain-overlay"></div>
+<!-- NavigationDrawer (Web) -->
+<nav class="hidden md:flex flex-col h-full py-margin bg-surface-container-lowest h-full w-64 fixed left-0 top-0 border-r border-white/10 z-40">
+<div class="px-gutter mb-8">
+<span class="font-mono-label text-mono-label text-primary font-bold">ADMIN TERMINAL</span>
+</div>
+<ul class="flex-1 space-y-2">
+<li>
+<a class="flex items-center gap-3 text-on-surface-variant pl-4 py-3 hover:bg-white/5 hover:text-on-surface transition-all active:translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+<span class="font-mono-data text-mono-data">DASHBOARD</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-on-surface-variant pl-4 py-3 hover:bg-white/5 hover:text-on-surface transition-all active:translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">point_of_sale</span>
+<span class="font-mono-data text-mono-data">CASHIER</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-on-surface-variant pl-4 py-3 hover:bg-white/5 hover:text-on-surface transition-all active:translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">soup_kitchen</span>
+<span class="font-mono-data text-mono-data">KITCHEN</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-primary border-l-2 border-primary bg-primary/5 pl-4 py-3 hover:bg-white/5 hover:text-on-surface transition-all active:translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">view_list</span>
+<span class="font-mono-data text-mono-data">QUEUE</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-on-surface-variant pl-4 py-3 hover:bg-white/5 hover:text-on-surface transition-all active:translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">inventory_2</span>
+<span class="font-mono-data text-mono-data">INVENTORY</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-on-surface-variant pl-4 py-3 hover:bg-white/5 hover:text-on-surface transition-all active:translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">analytics</span>
+<span class="font-mono-data text-mono-data">REPORTS</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Canvas -->
+<div class="md:ml-64 min-h-screen flex flex-col pb-24 md:pb-0">
+<!-- TopAppBar (Mobile & Web) -->
+<header class="flex justify-between items-center px-gutter w-full h-16 sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-white/10 md:border-none md:bg-transparent">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary md:hidden" style="font-variation-settings: 'FILL' 1;">terminal</span>
+<span class="font-mono-label text-mono-label text-primary font-bold tracking-[0.2em] uppercase md:hidden">SLICK</span>
+<h1 class="hidden md:block font-headline-lg text-headline-lg tracking-tighter text-on-surface">LIVE QUEUE</h1>
+</div>
+<button class="text-on-surface-variant hover:text-primary-fixed-dim transition-colors active:scale-95 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+</button>
+</header>
+<main class="flex-1 px-4 md:px-gutter max-w-container-max mx-auto w-full pt-8 space-y-8">
+<header class="mb-8 md:hidden">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile tracking-tighter text-on-surface">LIVE QUEUE</h1>
+<p class="font-mono-data text-mono-data text-on-surface-variant mt-2">SYS_TKN_TRACKER // ACTIVE</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Ready Section (High Priority) -->
+<div class="lg:col-span-1 space-y-4">
+<div class="flex items-center gap-2 mb-4">
+<div class="w-2 h-2 rounded-full bg-tertiary-fixed glow-green"></div>
+<span class="font-mono-label text-mono-label text-tertiary-fixed">SYS_READY</span>
+</div>
+<div class="glass-card p-6 border-l-2 border-l-tertiary-fixed relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 font-mono-data text-[6rem] leading-none text-tertiary-fixed pointer-events-none -mt-4 -mr-4 group-hover:opacity-20 transition-opacity">
+                            A09
+                        </div>
+<div class="flex justify-between items-start mb-6 relative z-10">
+<span class="font-display-lg text-display-lg text-on-surface">A09</span>
+<span class="material-symbols-outlined text-tertiary-fixed">check_circle</span>
+</div>
+<div class="flex items-center justify-between font-mono-data text-mono-data relative z-10">
+<span class="text-on-surface-variant">TKN_ID: 9842</span>
+<span class="text-tertiary-fixed">PICKUP NOW</span>
+</div>
+</div>
+<div class="glass-card p-6 border-l-2 border-l-tertiary-fixed relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 font-mono-data text-[6rem] leading-none text-tertiary-fixed pointer-events-none -mt-4 -mr-4 group-hover:opacity-20 transition-opacity">
+                            A08
+                        </div>
+<div class="flex justify-between items-start mb-6 relative z-10">
+<span class="font-headline-lg text-headline-lg text-on-surface">A08</span>
+</div>
+<div class="flex items-center justify-between font-mono-data text-mono-data relative z-10">
+<span class="text-on-surface-variant">TKN_ID: 9841</span>
+<span class="text-tertiary-fixed">WAITING PICKUP</span>
+</div>
+</div>
+</div>
+<!-- Preparing Section (Current Focus) -->
+<div class="lg:col-span-2 space-y-4">
+<div class="flex items-center gap-2 mb-4">
+<div class="w-2 h-2 rounded-full bg-primary-container glow-amber"></div>
+<span class="font-mono-label text-mono-label text-primary-container">SYS_PREPARING</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Active Preparing -->
+<div class="glass-card p-6 border-t-2 border-t-primary-container relative glow-amber">
+<div class="flex justify-between items-center mb-6">
+<span class="font-display-lg text-display-lg text-primary-container">B12</span>
+<div class="flex gap-1">
+<div class="w-1.5 h-6 bg-primary-container"></div>
+<div class="w-1.5 h-6 bg-primary-container opacity-50"></div>
+<div class="w-1.5 h-6 bg-primary-container opacity-20"></div>
+</div>
+</div>
+<div class="space-y-2 font-mono-data text-mono-data">
+<div class="flex justify-between">
+<span class="text-on-surface-variant">EST_TIME:</span>
+<span class="text-on-surface">02:45</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">ITEMS:</span>
+<span class="text-on-surface">4</span>
+</div>
+</div>
+</div>
+<div class="glass-card p-6">
+<div class="flex justify-between items-center mb-6">
+<span class="font-headline-lg text-headline-lg text-on-surface">B13</span>
+<span class="material-symbols-outlined text-primary-container text-sm">local_fire_department</span>
+</div>
+<div class="space-y-2 font-mono-data text-mono-data">
+<div class="flex justify-between">
+<span class="text-on-surface-variant">EST_TIME:</span>
+<span class="text-on-surface">05:10</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">ITEMS:</span>
+<span class="text-on-surface">2</span>
+</div>
+</div>
+</div>
+<div class="glass-card p-6">
+<div class="flex justify-between items-center mb-6">
+<span class="font-headline-lg text-headline-lg text-on-surface">B14</span>
+</div>
+<div class="space-y-2 font-mono-data text-mono-data">
+<div class="flex justify-between">
+<span class="text-on-surface-variant">EST_TIME:</span>
+<span class="text-on-surface">08:30</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant">ITEMS:</span>
+<span class="text-on-surface">5</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Waiting Section (Low Priority) -->
+<div class="mt-8">
+<div class="flex items-center gap-2 mb-4">
+<div class="w-2 h-2 rounded-full bg-surface-variant"></div>
+<span class="font-mono-label text-mono-label text-on-surface-variant">SYS_WAITING</span>
+</div>
+<div class="glass-card p-4 overflow-x-auto">
+<div class="flex gap-4 min-w-max">
+<div class="px-4 py-2 bg-surface-container-high rounded border border-white/5 font-mono-data text-mono-data text-on-surface-variant">C01</div>
+<div class="px-4 py-2 bg-surface-container-high rounded border border-white/5 font-mono-data text-mono-data text-on-surface-variant">C02</div>
+<div class="px-4 py-2 bg-surface-container-high rounded border border-white/5 font-mono-data text-mono-data text-on-surface-variant">C03</div>
+<div class="px-4 py-2 bg-surface-container-high rounded border border-white/5 font-mono-data text-mono-data text-on-surface-variant">C04</div>
+<div class="px-4 py-2 bg-surface-container-high rounded border border-white/5 font-mono-data text-mono-data text-on-surface-variant">C05</div>
+<div class="px-4 py-2 bg-surface-container-high rounded border border-white/5 font-mono-data text-mono-data text-on-surface-variant">C06</div>
+<div class="px-4 py-2 border border-dashed border-white/10 rounded font-mono-data text-mono-data text-on-surface-variant/50 flex items-center justify-center">+12 MORE</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe bg-background/80 backdrop-blur-xl border-t border-white/10">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-90 transition-transform">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">restaurant_menu</span>
+<span class="font-mono-label text-mono-label">MENU</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-90 transition-transform">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">receipt_long</span>
+<span class="font-mono-label text-mono-label">ORDERS</span>
+</button>
+<button class="flex flex-col items-center justify-center text-primary bg-primary/10 rounded-xl py-1 px-3 active:scale-90 transition-transform">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">view_list</span>
+<span class="font-mono-label text-mono-label">QUEUE</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-90 transition-transform">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">person</span>
+<span class="font-mono-label text-mono-label">PROFILE</span>
+</button>
+</nav>
+</body></html>

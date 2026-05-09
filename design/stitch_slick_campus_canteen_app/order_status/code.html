@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Slick - Order Status</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#004e5c",
+                        "on-surface-variant": "#d4c5ab",
+                        "on-primary-container": "#6d5000",
+                        "on-primary-fixed": "#261a00",
+                        "on-secondary-fixed": "#261a00",
+                        "on-error-container": "#ffdad6",
+                        "primary-fixed-dim": "#fbbc00",
+                        "inverse-surface": "#ede1d0",
+                        "on-secondary": "#402d00",
+                        "error-container": "#93000a",
+                        "primary": "#ffe2ab",
+                        "background": "#181309",
+                        "surface-container-high": "#2f291e",
+                        "on-secondary-fixed-variant": "#5b4307",
+                        "on-surface": "#ede1d0",
+                        "on-background": "#ede1d0",
+                        "secondary-container": "#5d4509",
+                        "tertiary-fixed-dim": "#00d9fc",
+                        "inverse-on-surface": "#363024",
+                        "tertiary-fixed": "#aaedff",
+                        "surface-container-low": "#201b11",
+                        "on-secondary-container": "#d6b46f",
+                        "on-primary-fixed-variant": "#5c4300",
+                        "error": "#ffb4ab",
+                        "secondary-fixed-dim": "#e5c27b",
+                        "surface-variant": "#3a3428",
+                        "primary-container": "#ffbf00",
+                        "outline-variant": "#504532",
+                        "outline": "#9c8f78",
+                        "on-tertiary": "#003640",
+                        "secondary-fixed": "#ffdfa0",
+                        "on-error": "#690005",
+                        "secondary": "#e5c27b",
+                        "surface-container": "#241f14",
+                        "surface-tint": "#fbbc00",
+                        "on-tertiary-fixed": "#001f26",
+                        "surface-bright": "#3f382d",
+                        "surface-dim": "#181309",
+                        "tertiary": "#b4efff",
+                        "surface-container-lowest": "#120e05",
+                        "inverse-primary": "#795900",
+                        "surface-container-highest": "#3a3428",
+                        "primary-fixed": "#ffdfa0",
+                        "on-tertiary-container": "#005d6d",
+                        "on-primary": "#402d00",
+                        "surface": "#181309",
+                        "tertiary-container": "#04dcff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "32px",
+                        "gutter": "16px",
+                        "container-padding": "20px",
+                        "xl": "48px",
+                        "sm": "12px",
+                        "unit": "8px",
+                        "md": "20px",
+                        "xs": "4px",
+                        "safe": "env(safe-area-inset-bottom)"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Hanken Grotesk"],
+                        "label-sm": ["Inter"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "display-lg": ["40px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom glow utility for static OLED effect */
+        .glow-amber {
+            box-shadow: 0 0 20px rgba(255, 191, 0, 0.4);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background antialiased min-h-screen flex flex-col font-body-md selection:bg-primary/30 selection:text-primary">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md flex justify-between items-center px-gutter py-sm max-w-[1200px] mx-auto border-b border-white/5 left-0 right-0">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-[28px]">restaurant_menu</span>
+<h1 class="font-display-lg text-display-lg font-bold text-primary tracking-tighter">Slick</h1>
+</div>
+<!-- Desktop Navigation Cluster (hidden on mobile) -->
+<nav class="hidden md:flex items-center gap-lg">
+<a class="font-label-md text-label-md text-on-surface-variant hover:opacity-80 transition-opacity" href="#">Menu</a>
+<a class="font-label-md text-label-md text-primary font-bold" href="#">Orders</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:opacity-80 transition-opacity" href="#">Profile</a>
+</nav>
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden border border-white/10 hover:opacity-80 transition-opacity cursor-pointer">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A close-up, softly lit portrait of a young professional with a neutral expression, serving as a profile avatar. The lighting is balanced and modern, fitting within a sleek, high-contrast dark mode UI. The background is slightly out of focus, drawing attention to the subject's face." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCanqD7cwm6xnguxWhsZLiFGKSKudTrOMdu0eHyZEJD6lrHr4aghKBW_31I1Rxb8YyPscgZiWHV4IdrH30mbKxWhr7ZD7v8PSJSaMBLvteIBdl5LGY56CiVy3yoBNF7lcZxkl-S0aCHyISaKxOz_KP7y6vkvO7E1aYKi5V_gHWVrrF3uK-_4--BjYEy_9-ePg1h7D4IgnM9JRadII50BM85ztOHHTUDQvEL3e7LXKxcwd5kXynn70jvf43MurZvirXTxqYdgPy79SQr"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 pt-[88px] pb-[100px] px-md max-w-[800px] mx-auto w-full flex flex-col gap-lg">
+<!-- Status Hero Card -->
+<section class="bg-surface-container-low/40 backdrop-blur-xl border border-white/10 rounded-xl p-lg flex flex-col items-center text-center relative overflow-hidden">
+<!-- Subtle gradient background accent -->
+<div class="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none"></div>
+<div class="relative z-10 w-full">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-xs">Order #8492</p>
+<h2 class="font-display-lg text-display-lg text-primary mb-md glow-text">Preparing</h2>
+<p class="font-body-lg text-body-lg text-on-surface mb-lg">Estimated ready time: <span class="text-primary font-semibold">12:45 PM</span></p>
+<!-- Stepper Progress Tracker -->
+<div class="flex items-center justify-between w-full max-w-[400px] mx-auto relative px-sm">
+<!-- Progress Line Background -->
+<div class="absolute top-1/2 left-0 w-full h-[2px] bg-white/10 -z-10 translate-y-[-50%]"></div>
+<!-- Active Progress Line -->
+<div class="absolute top-1/2 left-0 w-1/2 h-[2px] bg-primary -z-10 translate-y-[-50%] shadow-[0_0_10px_rgba(255,191,0,0.6)]"></div>
+<!-- Step 1: Received -->
+<div class="flex flex-col items-center gap-unit">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface">Received</span>
+</div>
+<!-- Step 2: Preparing (Active) -->
+<div class="flex flex-col items-center gap-unit">
+<div class="w-8 h-8 rounded-full bg-background border-2 border-primary text-primary flex items-center justify-center glow-amber">
+<span class="material-symbols-outlined text-[18px]">skillet</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold">Preparing</span>
+</div>
+<!-- Step 3: Ready (Inactive) -->
+<div class="flex flex-col items-center gap-unit">
+<div class="w-8 h-8 rounded-full bg-surface-variant border border-white/10 text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">shopping_bag</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Ready</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Queue Visualization Bento Box -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-sm">
+<!-- Queue Status -->
+<div class="bg-surface-container-low/40 backdrop-blur-xl border border-white/10 rounded-xl p-md flex flex-col justify-between min-h-[140px]">
+<div class="flex items-center gap-unit text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<h3 class="font-label-md text-label-md uppercase tracking-wider">Live Queue</h3>
+</div>
+<div>
+<div class="font-headline-lg text-headline-lg text-on-surface">3 Orders</div>
+<div class="font-body-md text-body-md text-on-surface-variant">ahead of you</div>
+</div>
+</div>
+<!-- Visual Queue Tokens -->
+<div class="bg-surface-container-low/40 backdrop-blur-xl border border-white/10 rounded-xl p-md flex flex-col justify-center gap-md min-h-[140px]">
+<div class="flex items-center gap-unit overflow-x-auto hide-scrollbar">
+<!-- Orders Ahead -->
+<div class="w-10 h-10 rounded-lg bg-surface-variant border border-white/5 flex items-center justify-center opacity-50 shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">receipt</span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-variant border border-white/5 flex items-center justify-center opacity-70 shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">receipt</span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-variant border border-white/5 flex items-center justify-center opacity-90 shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">receipt</span>
+</div>
+<!-- Current User Order -->
+<div class="w-12 h-12 rounded-lg bg-primary/10 border border-primary text-primary flex items-center justify-center shrink-0 glow-amber relative">
+<span class="material-symbols-outlined text-[24px]">person</span>
+<!-- Tiny pulsing indicator dot (simulated without animation via glow) -->
+<div class="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full shadow-[0_0_8px_rgba(255,191,0,1)]"></div>
+</div>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant text-right">You are next up soon</p>
+</div>
+</section>
+<!-- Order Summary Card -->
+<section class="bg-surface-container-low/40 backdrop-blur-xl border border-white/10 rounded-xl p-md">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-md">Order Details</h3>
+<div class="flex flex-col gap-sm">
+<!-- Item 1 -->
+<div class="flex justify-between items-start py-sm border-b border-white/5">
+<div class="flex gap-md items-start">
+<div class="w-8 h-8 rounded bg-surface-variant flex items-center justify-center text-on-surface font-label-sm shrink-0">1x</div>
+<div>
+<h4 class="font-body-lg text-body-lg text-on-surface leading-tight">Spicy Tuna Bowl</h4>
+<div class="flex gap-unit mt-xs">
+<span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-[10px] uppercase border border-primary/20">Extra Spicy</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-variant text-on-surface-variant font-label-sm text-[10px] uppercase border border-white/5">No Mayo</span>
+</div>
+</div>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant shrink-0">$12.50</span>
+</div>
+<!-- Item 2 -->
+<div class="flex justify-between items-start py-sm border-b border-white/5">
+<div class="flex gap-md items-start">
+<div class="w-8 h-8 rounded bg-surface-variant flex items-center justify-center text-on-surface font-label-sm shrink-0">2x</div>
+<div>
+<h4 class="font-body-lg text-body-lg text-on-surface leading-tight">Matcha Iced Latte</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs text-sm">Oat Milk</p>
+</div>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant shrink-0">$9.00</span>
+</div>
+</div>
+<!-- Total -->
+<div class="flex justify-between items-center mt-md pt-sm">
+<span class="font-body-lg text-body-lg text-on-surface-variant">Total</span>
+<span class="font-headline-md text-headline-md text-primary">$21.50</span>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Visible on Mobile, Hidden on Desktop) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 rounded-t-xl bg-background/80 backdrop-blur-xl border-t border-white/10 flex justify-around items-center h-xl px-gutter pb-safe pb-4 pt-2">
+<!-- Inactive Tab -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-150 w-16" href="#">
+<span class="material-symbols-outlined text-[24px] mb-1">grid_view</span>
+<span class="font-label-sm text-label-sm text-[10px]">Menu</span>
+</a>
+<!-- Active Tab (Orders) -->
+<a class="flex flex-col items-center justify-center text-primary font-bold bg-primary/10 rounded-xl px-4 py-2 hover:text-primary transition-colors active:scale-90 duration-150 min-w-[64px]" href="#">
+<span class="material-symbols-outlined text-[24px] mb-1" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+<span class="font-label-sm text-label-sm text-[10px]">Orders</span>
+</a>
+<!-- Inactive Tab -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-150 w-16" href="#">
+<span class="material-symbols-outlined text-[24px] mb-1">person</span>
+<span class="font-label-sm text-label-sm text-[10px]">Profile</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Student Menu - Slick</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800&amp;family=Inter:wght@300;400&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#d0bcff",
+                        "tertiary-fixed-dim": "#4ae176",
+                        "background": "#131313",
+                        "secondary-fixed": "#e9ddff",
+                        "error": "#ffb4ab",
+                        "on-secondary-container": "#c4abff",
+                        "primary-container": "#f59e0b",
+                        "on-primary": "#472a00",
+                        "inverse-surface": "#e5e2e1",
+                        "surface": "#131313",
+                        "primary-fixed": "#ffddb8",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "on-surface-variant": "#d8c3ad",
+                        "on-primary-fixed": "#2a1700",
+                        "inverse-on-surface": "#313030",
+                        "on-surface": "#e5e2e1",
+                        "tertiary-container": "#2bca62",
+                        "on-primary-fixed-variant": "#653e00",
+                        "secondary-container": "#571bc1",
+                        "on-tertiary-fixed": "#002109",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-high": "#2a2a2a",
+                        "error-container": "#93000a",
+                        "surface-bright": "#3a3939",
+                        "inverse-primary": "#855300",
+                        "surface-tint": "#ffb95f",
+                        "on-secondary": "#3c0091",
+                        "on-error-container": "#ffdad6",
+                        "primary-fixed-dim": "#ffb95f",
+                        "surface-variant": "#353534",
+                        "on-primary-container": "#613b00",
+                        "primary": "#ffc174",
+                        "outline": "#a08e7a",
+                        "on-error": "#690005",
+                        "tertiary-fixed": "#6bff8f",
+                        "on-background": "#e5e2e1",
+                        "tertiary": "#51e77b",
+                        "on-tertiary-container": "#004f20",
+                        "surface-container-low": "#1c1b1b",
+                        "on-tertiary": "#003915",
+                        "on-secondary-fixed": "#23005c",
+                        "surface-container": "#201f1f",
+                        "on-tertiary-fixed-variant": "#005321",
+                        "secondary": "#d0bcff",
+                        "outline-variant": "#534434",
+                        "surface-container-highest": "#353534",
+                        "surface-dim": "#131313"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "margin": "32px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "mono-label": ["JetBrains Mono"],
+                        "headline-lg": ["Epilogue"],
+                        "display-lg": ["Epilogue"],
+                        "headline-lg-mobile": ["Epilogue"],
+                        "mono-data": ["JetBrains Mono"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "300" }],
+                        "mono-label": ["12px", { "lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "headline-lg": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-lg": ["72px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "800" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "mono-data": ["14px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Premium Hacker Aesthetics Overrides */
+        body { background-color: #0a0a0a; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-card:hover {
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.15);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+        .status-dot.active { box-shadow: 0 0 8px rgba(81, 231, 123, 0.8); }
+        .status-dot.error { box-shadow: 0 0 8px rgba(255, 180, 171, 0.8); }
+        
+        /* CSS Grain Implementation */
+        .grain-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.03;
+            background-image: repeating-radial-gradient(circle at 17% 32%, white, transparent 1px),
+                              repeating-radial-gradient(circle at 60% 40%, white, transparent 1px);
+            background-size: 2px 2px;
+        }
+        
+        /* Hide scrollbar for chips */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface font-body-md antialiased relative min-h-screen">
+<div class="grain-overlay"></div>
+<!-- TopAppBar -->
+<header class="bg-background/80 backdrop-blur-xl flex justify-between items-center px-gutter w-full h-16 sticky top-0 z-50 border-b border-white/10 hidden md:flex">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary hover:text-primary-fixed-dim transition-colors active:scale-95 transition-transform" style="font-variation-settings: 'FILL' 0;">terminal</span>
+</div>
+<div class="font-mono-label text-primary font-bold tracking-[0.2em] uppercase font-headline-lg-mobile text-headline-lg-mobile tracking-tighter">
+            SLICK
+        </div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary hover:text-primary-fixed-dim transition-colors active:scale-95 transition-transform" style="font-variation-settings: 'FILL' 0;">account_circle</span>
+</div>
+</header>
+<!-- Mobile TopAppBar Equivalent (Keeping it cohesive with JSON rules) -->
+<header class="bg-background/80 backdrop-blur-xl flex justify-between items-center px-gutter w-full h-16 sticky top-0 z-50 border-b border-white/10 md:hidden">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary hover:text-primary-fixed-dim transition-colors active:scale-95 transition-transform">terminal</span>
+</div>
+<div class="font-mono-label text-primary font-bold tracking-[0.2em] uppercase font-headline-lg-mobile text-headline-lg-mobile tracking-tighter">
+            SLICK
+        </div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary hover:text-primary-fixed-dim transition-colors active:scale-95 transition-transform">account_circle</span>
+</div>
+</header>
+<main class="max-w-container-max mx-auto pb-32 md:pb-16">
+<!-- Hero Section -->
+<section class="px-gutter pt-margin pb-8">
+<h1 class="font-display-lg text-display-lg text-on-surface mb-2 tracking-tighter leading-tight">
+                What are you<br/><span class="text-primary-container italic">craving?</span>
+</h1>
+<p class="font-body-md text-on-surface-variant max-w-md">
+                Initialize hunger protocols. Browse the latest high-octane fuel for your late-night coding sessions.
+            </p>
+</section>
+<!-- Category Chips -->
+<section class="px-gutter mb-10 overflow-x-auto no-scrollbar">
+<div class="flex gap-4 inline-flex">
+<button class="bg-primary-container text-on-primary font-mono-label px-6 py-2 rounded-full border border-primary-container transition-all active:scale-95 flex items-center gap-2">
+<span class="w-1.5 h-1.5 bg-black rounded-sm rotate-45"></span>
+                    Meals
+                </button>
+<button class="glass-card text-on-surface-variant font-mono-label px-6 py-2 rounded-full hover:text-primary-container transition-all active:scale-95 flex items-center gap-2">
+<span class="w-1.5 h-1.5 bg-on-surface-variant rounded-sm rotate-45"></span>
+                    Snacks
+                </button>
+<button class="glass-card text-on-surface-variant font-mono-label px-6 py-2 rounded-full hover:text-primary-container transition-all active:scale-95 flex items-center gap-2">
+<span class="w-1.5 h-1.5 bg-on-surface-variant rounded-sm rotate-45"></span>
+                    Drinks
+                </button>
+<button class="glass-card text-on-surface-variant font-mono-label px-6 py-2 rounded-full hover:text-primary-container transition-all active:scale-95 flex items-center gap-2">
+<span class="w-1.5 h-1.5 bg-on-surface-variant rounded-sm rotate-45"></span>
+                    Caffeine
+                </button>
+</div>
+</section>
+<!-- Asymmetric Masonry Grid -->
+<section class="px-gutter columns-1 sm:columns-2 lg:columns-3 gap-gutter">
+<!-- Card 1 -->
+<article class="glass-card rounded-xl break-inside-avoid mb-gutter overflow-hidden group cursor-pointer relative transition-all duration-300">
+<div class="h-64 w-full bg-surface-container relative">
+<img alt="Ramen" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500" data-alt="A moody, high-contrast photograph of a sleek bowl of steaming ramen. The lighting is cinematic and dark, with subtle amber and neon green rim lights reflecting off the dark broth and noodles. The setting feels like a futuristic, cyberpunk noodle bar. High-end, pristine hacker aesthetic with deep blacks and sharp focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1LnwJYyIYlpJfQrNNcKj7guVKT1XTqk2z2lQNRDnixoKneWO14613yni8uGTGZSs1TdJoUdPxwi-d2Hd8nyhehGFJY3opb8FmK4P9v73hKbjnsmOhvUA6bWfhOpjYJk2K1YCfxJnTlMpHaba1aIYln57GlsAi7p36nH0nlS9tpGbDNrk5bmlaeA8m06O8aaDP2UugQIAoRKAhW9xC4GvPJEfZ4LMbrMpmPVwqK8yCFILoaZ4yJ5BPw6V7oMccoDfKT_P1xRbdfLjd"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+<button class="absolute bottom-4 right-4 bg-primary-container text-on-primary w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary-fixed shadow-[0_0_15px_rgba(245,158,11,0.4)] active:scale-90 transition-all z-10">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+</div>
+<div class="p-5 relative z-10 -mt-16">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Neo-Tokyo Ramen</h3>
+</div>
+<div class="flex items-center gap-3 mt-4">
+<span class="font-mono-label text-mono-label text-primary-container">$14.50</span>
+<div class="flex items-center gap-1.5 text-on-surface-variant font-mono-label text-[10px]">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary status-dot active"></span>
+                            SYS_ONLINE
+                        </div>
+</div>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="glass-card rounded-xl break-inside-avoid mb-gutter overflow-hidden group cursor-pointer relative transition-all duration-300">
+<div class="h-48 w-full bg-surface-container relative">
+<img alt="Energy Drink" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500" data-alt="A macro shot of a sleek, matte black energy drink can covered in condensation. The background is a pure void of darkness with a single, sharp streak of amber light cutting across the surface. The aesthetic is strictly premium dark mode, tech-focused, and highly stylized." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAydv9f6aOzqoegrEee9gWtDQDQxGihnecSsqYJDduJrLYczCuAdLV8-_lcdPXUZH_N8je4XFlqQurh8YBCT9sNLN2572Z9ib3dzcUQIF2-zxrY6T1y863GvZIdpTbIeZorLDnGM-34ye_v2OU10zHjVdg0hCteiMPnPWJSsOrB8oCNhtjaAP6hf5WaephF3CdYqb9ErZWdvrrGcxs_l05256m4T2sm59BFPuo3uHW4rAhQi2ZjIR9mgGcrHTOGi8aOtuoVsXv3fEMh"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+<button class="absolute bottom-4 right-4 bg-primary-container text-on-primary w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary-fixed shadow-[0_0_15px_rgba(245,158,11,0.4)] active:scale-90 transition-all z-10">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+</div>
+<div class="p-5 relative z-10 -mt-16">
+<h3 class="font-headline-lg-mobile text-[24px] font-bold text-on-surface leading-tight mb-1">Overclock Elixir</h3>
+<div class="flex items-center gap-3 mt-4">
+<span class="font-mono-label text-mono-label text-primary-container">$4.00</span>
+<div class="flex items-center gap-1.5 text-on-surface-variant font-mono-label text-[10px]">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary status-dot active"></span>
+                            SYS_ONLINE
+                        </div>
+</div>
+</div>
+</article>
+<!-- Card 3 (Sold Out) -->
+<article class="glass-card rounded-xl break-inside-avoid mb-gutter overflow-hidden relative transition-all duration-300 opacity-60">
+<div class="h-56 w-full bg-surface-container relative">
+<img alt="Protein Bar" class="w-full h-full object-cover grayscale" data-alt="A dark, minimalist composition showing a geometric protein bar unwrapped on a dark metallic surface. The lighting is cold and harsh, casting long, sharp shadows. The color palette is monochromatic with deep grays and blacks, embodying a sterile, functional hacker aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHZzM-Fw5uCWLM4skCberzoZimDSZnzz_XRQreHTDui6FeTz4xy6zqJ2O89Ci6gTU6WibrhZoEtrk2Yov5SsmThcFLumYYnnvtuw_NEJr4JFyrNEPiMl-FZS46UJkbuuNXDFlgRzp2z6WvZ2jsUNVdziPGWjqGtxOwZU6kbxiTCMNEppZswfsx4NRMD85SoJ8nBUArZA5oGUi4itjuY38BlhLC5VUXuMup1DraNbXcB5NNQYcXcU8XH-WBlSCgNcEd635osw4AZM0F"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+</div>
+<div class="p-5 relative z-10 -mt-16">
+<h3 class="font-headline-lg-mobile text-[24px] font-bold text-on-surface-variant leading-tight mb-1">Syntax Bar</h3>
+<div class="flex items-center gap-3 mt-4">
+<span class="font-mono-label text-mono-label text-on-surface-variant line-through">$3.50</span>
+<div class="flex items-center gap-1.5 text-error font-mono-label text-[10px]">
+<span class="w-1.5 h-1.5 rounded-full bg-error status-dot error"></span>
+                            DEPLETED
+                        </div>
+</div>
+</div>
+</article>
+<!-- Card 4 -->
+<article class="glass-card rounded-xl break-inside-avoid mb-gutter overflow-hidden group cursor-pointer relative transition-all duration-300">
+<div class="h-72 w-full bg-surface-container relative">
+<img alt="Burger" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500" data-alt="A towering, artisanal burger presented on a dark slate board against a pitch-black background. High-contrast lighting highlights the textures of the bun, melted cheese, and patty. A subtle warm glow emanates from below, contrasting with the cold, dark environment. Premium, hyper-detailed photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwO-NlyfUeCn0CnUn9yQPnpXdiLTI9dj6NAjRlBdvJPXNbvokMBvHC0wBS91071rMsqFlgaxDcJ_X3O4yxQL-2gSRgMlz3pjYIPRB91R_uSEURZkQOVUnZ-pLXvenCN04iEbGsRPgt7SUBXXQxXWvvGSQRUYxmpBXBGegtsSxe_g90ZhoHblatKIk0LaK8g81nAmostbCuOFgpLcXzFGazo8Luk8PRFTQIjXc-x8_vpxIZO6j4WqNYdjUUDDyIFxAyFlkIBt5IyH7H"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+<button class="absolute bottom-4 right-4 bg-primary-container text-on-primary w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary-fixed shadow-[0_0_15px_rgba(245,158,11,0.4)] active:scale-90 transition-all z-10">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+</div>
+<div class="p-5 relative z-10 -mt-16">
+<h3 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-1">Kernel Burger</h3>
+<div class="flex items-center gap-3 mt-4">
+<span class="font-mono-label text-mono-label text-primary-container">$12.00</span>
+<div class="flex items-center gap-1.5 text-on-surface-variant font-mono-label text-[10px]">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary status-dot active"></span>
+                            SYS_ONLINE
+                        </div>
+</div>
+</div>
+</article>
+<!-- Card 5 -->
+<article class="glass-card rounded-xl break-inside-avoid mb-gutter overflow-hidden group cursor-pointer relative transition-all duration-300">
+<div class="p-5 pb-0 flex justify-between items-start">
+<div>
+<h3 class="font-headline-lg-mobile text-[24px] font-bold text-on-surface leading-tight mb-2">Dark Web Roast</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-[200px] mb-4">Double shot espresso pulled over local ice.</p>
+</div>
+</div>
+<div class="px-5 pb-5 flex items-center justify-between mt-2">
+<div class="flex items-center gap-3">
+<span class="font-mono-label text-mono-label text-primary-container">$5.50</span>
+<div class="flex items-center gap-1.5 text-on-surface-variant font-mono-label text-[10px]">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary status-dot active"></span>
+                            SYS_ONLINE
+                        </div>
+</div>
+<button class="bg-surface-bright text-on-surface w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary-container hover:text-on-primary transition-all active:scale-90 border border-white/10">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+</div>
+</article>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="bg-background/80 backdrop-blur-xl border-t border-white/10 fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe md:hidden">
+<a class="flex flex-col items-center justify-center text-primary bg-primary/10 rounded-xl py-1 px-3 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">restaurant_menu</span>
+<span class="font-mono-label text-mono-label">MENU</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined mb-1">receipt_long</span>
+<span class="font-mono-label text-mono-label">ORDERS</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined mb-1">view_list</span>
+<span class="font-mono-label text-mono-label">QUEUE</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="font-mono-label text-mono-label">PROFILE</span>
+</a>
+</nav>
+</body></html>

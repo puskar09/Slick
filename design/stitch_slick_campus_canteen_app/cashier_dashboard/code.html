@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Slick - Admin Cashier View</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed-variant": "#004e5c",
+                    "on-surface-variant": "#d4c5ab",
+                    "on-primary-container": "#6d5000",
+                    "on-primary-fixed": "#261a00",
+                    "on-secondary-fixed": "#261a00",
+                    "on-error-container": "#ffdad6",
+                    "primary-fixed-dim": "#fbbc00",
+                    "inverse-surface": "#ede1d0",
+                    "on-secondary": "#402d00",
+                    "error-container": "#93000a",
+                    "primary": "#ffe2ab",
+                    "background": "#181309",
+                    "surface-container-high": "#2f291e",
+                    "on-secondary-fixed-variant": "#5b4307",
+                    "on-surface": "#ede1d0",
+                    "on-background": "#ede1d0",
+                    "secondary-container": "#5d4509",
+                    "tertiary-fixed-dim": "#00d9fc",
+                    "inverse-on-surface": "#363024",
+                    "tertiary-fixed": "#aaedff",
+                    "surface-container-low": "#201b11",
+                    "on-secondary-container": "#d6b46f",
+                    "on-primary-fixed-variant": "#5c4300",
+                    "error": "#ffb4ab",
+                    "secondary-fixed-dim": "#e5c27b",
+                    "surface-variant": "#3a3428",
+                    "primary-container": "#ffbf00",
+                    "outline-variant": "#504532",
+                    "outline": "#9c8f78",
+                    "on-tertiary": "#003640",
+                    "secondary-fixed": "#ffdfa0",
+                    "on-error": "#690005",
+                    "secondary": "#e5c27b",
+                    "surface-container": "#241f14",
+                    "surface-tint": "#fbbc00",
+                    "on-tertiary-fixed": "#001f26",
+                    "surface-bright": "#3f382d",
+                    "surface-dim": "#181309",
+                    "tertiary": "#b4efff",
+                    "surface-container-lowest": "#120e05",
+                    "inverse-primary": "#795900",
+                    "surface-container-highest": "#3a3428",
+                    "primary-fixed": "#ffdfa0",
+                    "on-tertiary-container": "#005d6d",
+                    "on-primary": "#402d00",
+                    "surface": "#181309",
+                    "tertiary-container": "#04dcff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "lg": "32px",
+                    "gutter": "16px",
+                    "container-padding": "20px",
+                    "xl": "48px",
+                    "sm": "12px",
+                    "unit": "8px",
+                    "md": "20px",
+                    "xs": "4px"
+            },
+            "fontFamily": {
+                    "body-md": ["Hanken Grotesk"],
+                    "label-sm": ["Inter"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "body-lg": ["Hanken Grotesk"],
+                    "label-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "display-lg": ["40px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "500"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { background-color: theme('colors.background'); color: theme('colors.on-background'); }
+        .glass-card {
+            background-color: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-bottom-color: rgba(255, 255, 255, 0.04);
+        }
+        .btn-primary {
+            background-color: theme('colors.primary-container');
+            color: theme('colors.on-primary-container');
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: scale(0.98);
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, theme('colors.primary') 0%, theme('colors.secondary') 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased min-h-screen flex">
+<!-- NavigationDrawer Component -->
+<nav class="hidden md:flex flex-col py-lg h-full w-72 bg-surface-container-low/95 backdrop-blur-2xl border-r border-white/12 shadow-xl shrink-0 fixed left-0 top-0 bottom-0 z-40">
+<div class="px-md mb-lg">
+<h2 class="font-headline-md text-headline-md text-primary font-bold tracking-tight">Admin Console</h2>
+</div>
+<div class="flex-1 overflow-y-auto space-y-unit">
+<!-- Active Tab -->
+<a class="flex items-center px-md py-sm bg-primary text-on-primary rounded-lg mx-2 my-1 active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined mr-sm" style="font-variation-settings: 'FILL' 1;">payments</span>
+<span class="font-body-lg text-body-lg">Cashier View</span>
+</a>
+<!-- Inactive Tab -->
+<a class="flex items-center px-md py-sm text-on-surface-variant hover:bg-surface-variant hover:bg-white/5 transition-colors mx-2 my-1 rounded-lg active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined mr-sm">outdoor_grill</span>
+<span class="font-body-lg text-body-lg">Kitchen View</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-72 flex flex-col min-h-screen relative">
+<!-- TopAppBar Component (Mobile / Tablet Header) -->
+<header class="md:hidden flex justify-between items-center px-gutter py-sm max-w-[1200px] mx-auto fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-white/10 flat no shadows">
+<button class="text-primary hover:opacity-80 transition-opacity active:scale-95 duration-200">
+<span class="material-symbols-outlined font-headline-md text-headline-md">menu</span>
+</button>
+<h1 class="font-display-lg text-display-lg font-bold text-primary tracking-tighter">Slick</h1>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">person</span>
+</div>
+</header>
+<!-- Page Header -->
+<div class="pt-[80px] md:pt-lg px-gutter md:px-lg max-w-[1200px] mx-auto w-full">
+<div class="flex justify-between items-end mb-lg">
+<div>
+<h1 class="font-display-lg text-display-lg font-bold text-on-surface tracking-tighter mb-unit">Pending Payments</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Review and confirm outstanding orders.</p>
+</div>
+<div class="hidden sm:flex items-center space-x-sm">
+<span class="px-sm py-xs glass-card rounded-full font-label-sm text-label-sm text-primary flex items-center gap-xs">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                        Live Updates Active
+                    </span>
+</div>
+</div>
+<!-- Dashboard Stats -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-sm mb-lg">
+<div class="glass-card rounded-xl p-md flex flex-col justify-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-xs">Awaiting Payment</span>
+<span class="font-headline-lg text-headline-lg text-primary font-bold">12</span>
+</div>
+<div class="glass-card rounded-xl p-md flex flex-col justify-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-xs">In Kitchen</span>
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold">4</span>
+</div>
+<div class="glass-card rounded-xl p-md flex flex-col justify-center hidden sm:flex">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-xs">Ready</span>
+<span class="font-headline-lg text-headline-lg text-tertiary font-bold">2</span>
+</div>
+<div class="glass-card rounded-xl p-md flex flex-col justify-center hidden sm:flex">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-xs">Today's Total</span>
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold text-gradient">$845</span>
+</div>
+</div>
+<!-- Bento Grid of Orders -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-md pb-xl">
+<!-- Order Card 1 -->
+<div class="glass-card rounded-xl p-md flex flex-col h-full relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-full h-1 bg-primary/20"></div>
+<div class="flex justify-between items-start mb-md">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest block mb-xs">Token ID</span>
+<span class="font-headline-md text-headline-md font-bold text-on-surface text-gradient">#A-042</span>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest block mb-xs">Total</span>
+<span class="font-headline-md text-headline-md font-bold text-primary">$24.50</span>
+</div>
+</div>
+<div class="flex-1 mb-lg">
+<ul class="space-y-sm">
+<li class="flex justify-between items-center pb-sm border-b border-white/5">
+<div class="flex items-center">
+<span class="font-label-md text-label-md text-on-surface-variant mr-sm bg-white/5 px-2 py-1 rounded">2x</span>
+<span class="font-body-md text-body-md text-on-surface">Spicy Tuna Roll</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant">$16.00</span>
+</li>
+<li class="flex justify-between items-center pb-sm border-b border-white/5">
+<div class="flex items-center">
+<span class="font-label-md text-label-md text-on-surface-variant mr-sm bg-white/5 px-2 py-1 rounded">1x</span>
+<span class="font-body-md text-body-md text-on-surface">Miso Soup</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant">$4.50</span>
+</li>
+<li class="flex justify-between items-center pb-sm border-b border-white/5">
+<div class="flex items-center">
+<span class="font-label-md text-label-md text-on-surface-variant mr-sm bg-white/5 px-2 py-1 rounded">1x</span>
+<span class="font-body-md text-body-md text-on-surface">Iced Green Tea</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant">$4.00</span>
+</li>
+</ul>
+</div>
+<button class="w-full btn-primary font-label-md text-label-md py-sm rounded-lg flex items-center justify-center font-bold tracking-wide uppercase mt-auto">
+<span class="material-symbols-outlined mr-xs text-[18px]">check_circle</span>
+                        Confirm Payment
+                    </button>
+</div>
+<!-- Order Card 2 -->
+<div class="glass-card rounded-xl p-md flex flex-col h-full relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-full h-1 bg-primary/20"></div>
+<div class="flex justify-between items-start mb-md">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest block mb-xs">Token ID</span>
+<span class="font-headline-md text-headline-md font-bold text-on-surface text-gradient">#B-118</span>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest block mb-xs">Total</span>
+<span class="font-headline-md text-headline-md font-bold text-primary">$18.00</span>
+</div>
+</div>
+<div class="flex-1 mb-lg">
+<ul class="space-y-sm">
+<li class="flex justify-between items-center pb-sm border-b border-white/5">
+<div class="flex items-center">
+<span class="font-label-md text-label-md text-on-surface-variant mr-sm bg-white/5 px-2 py-1 rounded">1x</span>
+<span class="font-body-md text-body-md text-on-surface">Wagyu Burger</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant">$14.00</span>
+</li>
+<li class="flex justify-between items-center pb-sm border-b border-white/5">
+<div class="flex items-center">
+<span class="font-label-md text-label-md text-on-surface-variant mr-sm bg-white/5 px-2 py-1 rounded">1x</span>
+<span class="font-body-md text-body-md text-on-surface">Truffle Fries</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant">$4.00</span>
+</li>
+<div class="flex gap-xs mt-sm">
+<span class="px-2 py-1 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm">No Pickles</span>
+</div>
+</ul>
+</div>
+<button class="w-full btn-primary font-label-md text-label-md py-sm rounded-lg flex items-center justify-center font-bold tracking-wide uppercase mt-auto">
+<span class="material-symbols-outlined mr-xs text-[18px]">check_circle</span>
+                        Confirm Payment
+                    </button>
+</div>
+<!-- Order Card 3 (Empty State / Placeholder for masonry feel) -->
+<div class="glass-card rounded-xl p-md flex flex-col h-full relative overflow-hidden group opacity-50">
+<div class="absolute top-0 left-0 w-full h-1 bg-surface-variant"></div>
+<div class="flex justify-between items-start mb-md">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest block mb-xs">Token ID</span>
+<span class="font-headline-md text-headline-md font-bold text-surface-variant">#--</span>
+</div>
+</div>
+<div class="flex-1 flex flex-col items-center justify-center mb-lg text-center">
+<span class="material-symbols-outlined text-[48px] text-surface-variant mb-sm">hourglass_empty</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Waiting for new orders...</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Order Summary</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-fixed-dim": "#d0bcff",
+                      "tertiary-fixed-dim": "#4ae176",
+                      "background": "#131313",
+                      "secondary-fixed": "#e9ddff",
+                      "error": "#ffb4ab",
+                      "on-secondary-container": "#c4abff",
+                      "primary-container": "#f59e0b",
+                      "on-primary": "#472a00",
+                      "inverse-surface": "#e5e2e1",
+                      "surface": "#131313",
+                      "primary-fixed": "#ffddb8",
+                      "on-secondary-fixed-variant": "#5516be",
+                      "on-surface-variant": "#d8c3ad",
+                      "on-primary-fixed": "#2a1700",
+                      "inverse-on-surface": "#313030",
+                      "on-surface": "#e5e2e1",
+                      "tertiary-container": "#2bca62",
+                      "on-primary-fixed-variant": "#653e00",
+                      "secondary-container": "#571bc1",
+                      "on-tertiary-fixed": "#002109",
+                      "surface-container-lowest": "#0e0e0e",
+                      "surface-container-high": "#2a2a2a",
+                      "error-container": "#93000a",
+                      "surface-bright": "#3a3939",
+                      "inverse-primary": "#855300",
+                      "surface-tint": "#ffb95f",
+                      "on-secondary": "#3c0091",
+                      "on-error-container": "#ffdad6",
+                      "primary-fixed-dim": "#ffb95f",
+                      "surface-variant": "#353534",
+                      "on-primary-container": "#613b00",
+                      "primary": "#ffc174",
+                      "outline": "#a08e7a",
+                      "on-error": "#690005",
+                      "tertiary-fixed": "#6bff8f",
+                      "on-background": "#e5e2e1",
+                      "tertiary": "#51e77b",
+                      "on-tertiary-container": "#004f20",
+                      "surface-container-low": "#1c1b1b",
+                      "on-tertiary": "#003915",
+                      "on-secondary-fixed": "#23005c",
+                      "surface-container": "#201f1f",
+                      "on-tertiary-fixed-variant": "#005321",
+                      "secondary": "#d0bcff",
+                      "outline-variant": "#534434",
+                      "surface-container-highest": "#353534",
+                      "surface-dim": "#131313"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "container-max": "1280px",
+                      "margin": "32px",
+                      "unit": "4px"
+              },
+              "fontFamily": {
+                      "body-sm": [
+                              "inter"
+                      ],
+                      "mono-label": [
+                              "jetbrainsMono"
+                      ],
+                      "headline-lg": [
+                              "epilogue"
+                      ],
+                      "display-lg": [
+                              "epilogue"
+                      ],
+                      "headline-lg-mobile": [
+                              "epilogue"
+                      ],
+                      "mono-data": [
+                              "jetbrainsMono"
+                      ],
+                      "body-md": [
+                              "inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "300"
+                              }
+                      ],
+                      "mono-label": [
+                              "12px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "40px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "display-lg": [
+                              "72px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.04em",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "mono-data": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        /* Fallback fonts if not loaded globally */
+        @import url('https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800&family=Inter:wght@300;400&family=JetBrains+Mono:wght@400;500&display=swap');
+      </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen relative font-body-md antialiased selection:bg-primary-container selection:text-on-primary">
+<!-- TopAppBar -->
+<header class="bg-background/80 backdrop-blur-xl border-b border-white/10 flex justify-between items-center px-gutter w-full h-16 sticky top-0 z-50">
+<button class="text-primary hover:text-primary-fixed-dim transition-colors active:scale-95 transition-transform flex items-center justify-center p-2 rounded-full hover:bg-white/5">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+</button>
+<h1 class="font-mono-label text-primary font-bold tracking-[0.2em] uppercase">SLICK</h1>
+<button class="text-primary hover:text-primary-fixed-dim transition-colors active:scale-95 transition-transform flex items-center justify-center p-2 rounded-full hover:bg-white/5">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</header>
+<!-- Main Canvas -->
+<main class="w-full max-w-container-max mx-auto px-4 md:px-gutter py-8 md:py-margin flex justify-center items-start min-h-[calc(100vh-64px)] relative z-10">
+<!-- Ambient Background Glow -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-primary-container/5 blur-[120px] rounded-full pointer-events-none"></div>
+<!-- Glassmorphic Receipt Card -->
+<div class="w-full max-w-md bg-white/[0.03] backdrop-blur-[20px] border border-white/10 rounded-xl flex flex-col relative overflow-hidden shadow-2xl">
+<!-- Simulated Light Leak -->
+<div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+<!-- Header / Boarding Pass Style -->
+<div class="p-6 border-b border-white/10 flex justify-between items-center bg-surface-container-lowest/50">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 bg-primary-container rounded-sm shadow-[0_0_8px_rgba(245,158,11,0.6)]"></div>
+<span class="font-mono-label text-mono-label text-on-surface-variant uppercase tracking-widest">TRANSACTION</span>
+</div>
+<div class="flex items-center gap-2 text-primary-container">
+<span class="material-symbols-outlined text-[16px]" data-icon="tag">tag</span>
+<span class="font-mono-label text-mono-label">892-A</span>
+</div>
+</div>
+<!-- Token Number (Glowing) -->
+<div class="py-12 flex flex-col items-center justify-center border-b border-dashed border-white/20 relative bg-black/20">
+<span class="font-mono-label text-mono-label text-on-surface-variant mb-2 tracking-[0.2em] uppercase">Queue Token</span>
+<h2 class="font-display-lg text-display-lg text-primary-container drop-shadow-[0_0_40px_rgba(245,158,11,0.25)]">42</h2>
+</div>
+<!-- Itemized List -->
+<div class="p-6 flex flex-col gap-5 bg-surface-container-lowest/20">
+<div class="flex justify-between items-start font-mono-data text-mono-data text-on-surface group">
+<div class="flex gap-4">
+<span class="text-primary-container/70 group-hover:text-primary-container transition-colors">02</span>
+<div>
+<div class="text-on-surface">Neural Roast Espresso</div>
+<div class="text-on-surface-variant font-body-sm text-body-sm mt-1">Double shot, dark matter blend</div>
+</div>
+</div>
+<div class="text-on-surface text-right">$9.00</div>
+</div>
+<div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+<div class="flex justify-between items-start font-mono-data text-mono-data text-on-surface group">
+<div class="flex gap-4">
+<span class="text-primary-container/70 group-hover:text-primary-container transition-colors">01</span>
+<div>
+<div class="text-on-surface">Quantum Pastry</div>
+<div class="text-on-surface-variant font-body-sm text-body-sm mt-1">Holographic glaze</div>
+</div>
+</div>
+<div class="text-on-surface text-right">$6.50</div>
+</div>
+<div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+<div class="flex justify-between items-start font-mono-data text-mono-data text-on-surface group">
+<div class="flex gap-4">
+<span class="text-primary-container/70 group-hover:text-primary-container transition-colors">01</span>
+<div>
+<div class="text-on-surface">System Update Module</div>
+<div class="text-on-surface-variant font-body-sm text-body-sm mt-1">Hardware expansion</div>
+</div>
+</div>
+<div class="text-on-surface text-right">$120.00</div>
+</div>
+</div>
+<!-- Total Section -->
+<div class="px-6 py-5 bg-surface-container-lowest flex justify-between items-center border-y border-white/10 relative overflow-hidden">
+<div class="absolute left-0 top-0 w-1 h-full bg-primary-container shadow-[0_0_15px_rgba(245,158,11,0.5)]"></div>
+<span class="font-mono-label text-mono-label text-on-surface-variant uppercase tracking-widest pl-2">Total Amount</span>
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-primary-container">$135.50</span>
+</div>
+<!-- QR Code & CTA -->
+<div class="p-6 flex flex-col items-center gap-8 bg-black/40">
+<!-- QR Code Block -->
+<div class="flex flex-col items-center gap-4">
+<div class="w-40 h-40 border border-primary-container/40 rounded-xl p-3 flex items-center justify-center shadow-[0_0_30px_rgba(245,158,11,0.1)] bg-surface-container-lowest relative group">
+<!-- Corner Accents -->
+<div class="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-primary-container -translate-x-1 -translate-y-1"></div>
+<div class="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-primary-container translate-x-1 -translate-y-1"></div>
+<div class="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-primary-container -translate-x-1 translate-y-1"></div>
+<div class="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-primary-container translate-x-1 translate-y-1"></div>
+<img alt="QR Code" class="w-full h-full object-cover rounded opacity-90 group-hover:opacity-100 transition-opacity filter contrast-125 grayscale mix-blend-screen" data-alt="A high-contrast, sharply defined QR code graphic rendered in a stark, minimalist technical style. The QR pattern consists of crisp, geometric blocks in a glowing amber hue against a pure, deep black background. The overall aesthetic mimics a high-end cybernetic interface or a secure digital terminal access token, emitting a subtle, warm luminescence that implies active data transmission. The image focuses entirely on the abstract, digital pattern with precise, clean edges." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwZ1unN_gbV4Gk8gZu36-feVdBHjqYoM1920dSZLVTEz93iJYvUfqNQDuSPB_ujqfQ32kAx-DKlqL4A5imlpldeXUJ0lrR2QfpS_kXmaq5bZqYdvBwnjEzZc8C7Qz-JRkmsH6-1U5oJjOsSLe5ZzvvaQm3Vzwe7W9HspkRkKGs9etz-WFfmqmgI68yfRkmuByQrCa-4LzT8fRg8aNKWIPTThvqgRCKOQK4bwCGRU1S_NCs_RFPu6Ngw46oDBs64IWXXaUgY7nNgtnB"/>
+</div>
+<p class="font-mono-label text-mono-label text-on-surface-variant text-center tracking-widest">SCAN AT TERMINAL</p>
+</div>
+<!-- Primary CTA -->
+<button class="w-full bg-primary-container text-on-primary font-mono-label text-mono-label uppercase py-4 rounded-lg hover:shadow-[0_0_25px_rgba(245,158,11,0.25)] hover:bg-primary transition-all active:scale-[0.98] relative overflow-hidden group flex justify-center items-center gap-2">
+<div class="absolute top-0 left-0 w-full h-[1px] bg-white/40 group-hover:bg-white/60 transition-colors"></div>
+<span class="material-symbols-outlined text-[18px]" data-icon="check_circle">check_circle</span>
+                    Confirm Order
+                </button>
+</div>
+</div>
+</main>
+</body></html>

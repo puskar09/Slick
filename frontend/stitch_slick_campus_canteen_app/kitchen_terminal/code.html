@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin Kitchen Display</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800&amp;family=Inter:wght@300;400&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#d0bcff",
+                        "tertiary-fixed-dim": "#4ae176",
+                        "background": "#131313",
+                        "secondary-fixed": "#e9ddff",
+                        "error": "#ffb4ab",
+                        "on-secondary-container": "#c4abff",
+                        "primary-container": "#f59e0b",
+                        "on-primary": "#472a00",
+                        "inverse-surface": "#e5e2e1",
+                        "surface": "#131313",
+                        "primary-fixed": "#ffddb8",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "on-surface-variant": "#d8c3ad",
+                        "on-primary-fixed": "#2a1700",
+                        "inverse-on-surface": "#313030",
+                        "on-surface": "#e5e2e1",
+                        "tertiary-container": "#2bca62",
+                        "on-primary-fixed-variant": "#653e00",
+                        "secondary-container": "#571bc1",
+                        "on-tertiary-fixed": "#002109",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-high": "#2a2a2a",
+                        "error-container": "#93000a",
+                        "surface-bright": "#3a3939",
+                        "inverse-primary": "#855300",
+                        "surface-tint": "#ffb95f",
+                        "on-secondary": "#3c0091",
+                        "on-error-container": "#ffdad6",
+                        "primary-fixed-dim": "#ffb95f",
+                        "surface-variant": "#353534",
+                        "on-primary-container": "#613b00",
+                        "primary": "#ffc174",
+                        "outline": "#a08e7a",
+                        "on-error": "#690005",
+                        "tertiary-fixed": "#6bff8f",
+                        "on-background": "#e5e2e1",
+                        "tertiary": "#51e77b",
+                        "on-tertiary-container": "#004f20",
+                        "surface-container-low": "#1c1b1b",
+                        "on-tertiary": "#003915",
+                        "on-secondary-fixed": "#23005c",
+                        "surface-container": "#201f1f",
+                        "on-tertiary-fixed-variant": "#005321",
+                        "secondary": "#d0bcff",
+                        "outline-variant": "#534434",
+                        "surface-container-highest": "#353534",
+                        "surface-dim": "#131313"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "margin": "32px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "mono-label": ["JetBrains Mono"],
+                        "headline-lg": ["Epilogue"],
+                        "display-lg": ["Epilogue"],
+                        "headline-lg-mobile": ["Epilogue"],
+                        "mono-data": ["JetBrains Mono"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "300" }],
+                        "mono-label": ["12px", { "lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "headline-lg": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-lg": ["72px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "800" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "mono-data": ["14px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-border {
+            background: linear-gradient(to bottom right, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+            padding: 1px;
+            border-radius: inherit;
+        }
+        .kanban-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .kanban-scroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .kanban-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md h-screen w-full overflow-hidden flex selection:bg-primary-container selection:text-on-primary">
+<!-- Global Gradient Overlay for depth -->
+<div class="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-surface-container-high/20 via-background to-background"></div>
+<!-- MOBILE: TopAppBar -->
+<header class="flex justify-between items-center px-gutter w-full h-16 sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-white/10 md:hidden absolute top-0 left-0">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary" data-icon="terminal">terminal</span>
+</div>
+<div class="font-headline-lg-mobile text-headline-lg-mobile tracking-tighter text-primary">SLICK</div>
+<button class="text-primary hover:text-primary-fixed-dim transition-colors active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</header>
+<!-- MOBILE: BottomNavBar -->
+<nav class="bg-background/80 backdrop-blur-xl fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe border-t border-white/10 md:hidden">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-90 transition-transform">
+<span class="material-symbols-outlined mb-1" data-icon="restaurant_menu">restaurant_menu</span>
+<span class="font-mono-label text-mono-label">MENU</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-90 transition-transform">
+<span class="material-symbols-outlined mb-1" data-icon="receipt_long">receipt_long</span>
+<span class="font-mono-label text-mono-label">ORDERS</span>
+</button>
+<!-- Active Tab: QUEUE -->
+<button class="flex flex-col items-center justify-center text-primary bg-primary/10 rounded-xl py-1 px-3 active:scale-90 transition-transform">
+<span class="material-symbols-outlined mb-1" data-icon="view_list" style="font-variation-settings: 'FILL' 1;">view_list</span>
+<span class="font-mono-label text-mono-label text-primary">QUEUE</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-90 transition-transform">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-mono-label text-mono-label">PROFILE</span>
+</button>
+</nav>
+<!-- DESKTOP: NavigationDrawer -->
+<aside class="hidden md:flex flex-col h-full py-margin bg-surface-container-lowest border-r border-white/10 w-64 fixed left-0 top-0 z-40">
+<div class="px-6 mb-8">
+<h2 class="font-mono-label text-primary font-bold tracking-[0.2em] uppercase">ADMIN TERMINAL</h2>
+</div>
+<nav class="flex flex-col gap-1 w-full font-mono-data text-mono-data">
+<a class="flex items-center gap-3 text-on-surface-variant pl-4 py-3 hover:bg-white/5 hover:text-on-surface transition-all active:translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                DASHBOARD
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant pl-4 py-3 hover:bg-white/5 hover:text-on-surface transition-all active:translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="point_of_sale">point_of_sale</span>
+                CASHIER
+            </a>
+<!-- Active Tab: KITCHEN -->
+<a class="flex items-center gap-3 text-primary border-l-2 border-primary bg-primary/5 pl-4 py-3 active:translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="soup_kitchen" style="font-variation-settings: 'FILL' 1;">soup_kitchen</span>
+                KITCHEN
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant pl-4 py-3 hover:bg-white/5 hover:text-on-surface transition-all active:translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+                INVENTORY
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant pl-4 py-3 hover:bg-white/5 hover:text-on-surface transition-all active:translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+                REPORTS
+            </a>
+</nav>
+<div class="mt-auto px-6">
+<div class="text-on-surface-variant font-mono-label text-mono-label opacity-50 flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container shadow-[0_0_8px_rgba(43,202,98,0.6)]"></span>
+                SYSTEM ONLINE
+            </div>
+</div>
+</aside>
+<!-- Main Canvas: Kanban Board -->
+<main class="relative z-10 flex-1 md:ml-64 flex flex-col h-full pt-20 pb-24 md:pt-margin md:pb-margin px-4 md:px-gutter w-full">
+<!-- Header area for main canvas -->
+<div class="flex justify-between items-end mb-6 shrink-0">
+<div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg tracking-tighter text-on-surface">KDS Layout</h1>
+<p class="font-mono-data text-mono-data text-on-surface-variant mt-1">Live Order Stream // 3 Active Nodes</p>
+</div>
+<div class="hidden md:flex gap-2">
+<button class="bg-surface-container border border-white/10 px-4 py-2 rounded font-mono-label text-mono-label text-on-surface hover:bg-white/5 transition-colors">FILTER</button>
+<button class="bg-primary-container text-on-primary px-4 py-2 rounded font-mono-label text-mono-label font-bold hover:brightness-110 shadow-[0_-2px_10px_inset_rgba(255,255,255,0.2)] transition-all">SYNC</button>
+</div>
+</div>
+<!-- Kanban Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 overflow-hidden">
+<!-- Column 1: Queue -->
+<div class="flex flex-col h-full bg-surface-container-low/30 rounded-xl border border-white/5 p-4 backdrop-blur-md">
+<div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
+<h3 class="font-mono-label text-mono-label text-on-surface tracking-widest flex items-center gap-2">
+<span class="w-2 h-2 rounded-sm bg-secondary-fixed-dim"></span>
+                        QUEUE
+                    </h3>
+<span class="font-mono-data text-mono-data text-on-surface-variant bg-surface-container px-2 py-0.5 rounded text-xs">4</span>
+</div>
+<div class="flex flex-col gap-4 overflow-y-auto kanban-scroll h-full pr-1 pb-10">
+<!-- Standard Card -->
+<div class="bg-[rgba(255,255,255,0.03)] border border-white/10 rounded-lg p-4 backdrop-blur-xl hover:border-white/20 transition-colors cursor-grab relative">
+<div class="flex justify-between items-start mb-3">
+<div class="font-mono-data text-mono-data font-bold text-on-surface">#ORD-492</div>
+<div class="font-mono-data text-mono-data text-on-surface-variant text-xs">04:12</div>
+</div>
+<ul class="font-body-sm text-body-sm text-on-surface-variant space-y-2 mb-4">
+<li class="flex justify-between"><span class="text-on-surface">2x Smashed Burger</span></li>
+<li class="flex justify-between pl-4 text-xs opacity-70">↳ No Onions</li>
+<li class="flex justify-between"><span class="text-on-surface">1x Truffle Fries</span></li>
+</ul>
+<button class="w-full py-2 bg-surface-container border border-white/5 rounded font-mono-label text-mono-label text-primary hover:bg-white/5 transition-colors">START PREP</button>
+</div>
+<!-- Priority Card -->
+<div class="bg-[rgba(255,255,255,0.03)] border border-primary-container ring-1 ring-primary-container/50 shadow-[0_0_15px_rgba(245,158,11,0.1)] rounded-lg p-4 backdrop-blur-xl cursor-grab relative">
+<div class="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-l-[20px] border-t-primary-container border-l-transparent rounded-tr-lg"></div>
+<div class="flex justify-between items-start mb-3">
+<div class="font-mono-data text-mono-data font-bold text-primary-container">#ORD-495 (VIP)</div>
+<div class="font-mono-data text-mono-data text-error font-bold text-xs animate-pulse">09:45</div>
+</div>
+<ul class="font-body-sm text-body-sm text-on-surface-variant space-y-2 mb-4">
+<li class="flex justify-between"><span class="text-on-surface">1x Wagyu Ribeye</span></li>
+<li class="flex justify-between pl-4 text-xs opacity-70">↳ Medium Rare</li>
+<li class="flex justify-between"><span class="text-on-surface">2x Negroni</span></li>
+</ul>
+<button class="w-full py-2 bg-primary-container/20 border border-primary-container/50 text-primary-container rounded font-mono-label text-mono-label hover:bg-primary-container/30 transition-colors">EXPEDITE</button>
+</div>
+</div>
+</div>
+<!-- Column 2: Preparing -->
+<div class="flex flex-col h-full bg-surface-container-low/30 rounded-xl border border-white/5 p-4 backdrop-blur-md">
+<div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
+<h3 class="font-mono-label text-mono-label text-on-surface tracking-widest flex items-center gap-2">
+<span class="w-2 h-2 rounded-sm bg-primary-container shadow-[0_0_8px_rgba(245,158,11,0.5)]"></span>
+                        PREPARING
+                    </h3>
+<span class="font-mono-data text-mono-data text-on-surface-variant bg-surface-container px-2 py-0.5 rounded text-xs">2</span>
+</div>
+<div class="flex flex-col gap-4 overflow-y-auto kanban-scroll h-full pr-1 pb-10">
+<!-- Standard Card -->
+<div class="bg-[rgba(255,255,255,0.03)] border border-white/10 rounded-lg p-4 backdrop-blur-xl hover:border-white/20 transition-colors cursor-grab relative">
+<div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r"></div>
+<div class="flex justify-between items-start mb-3 pl-2">
+<div class="font-mono-data text-mono-data font-bold text-on-surface">#ORD-488</div>
+<div class="font-mono-data text-mono-data text-on-surface-variant text-xs">12:05</div>
+</div>
+<ul class="font-body-sm text-body-sm text-on-surface-variant space-y-2 mb-4 pl-2">
+<li class="flex justify-between"><span class="text-on-surface line-through opacity-50">1x Caesar Salad</span></li>
+<li class="flex justify-between"><span class="text-on-surface">1x Salmon Filet</span></li>
+</ul>
+<button class="w-full py-2 bg-surface-container border border-white/5 rounded font-mono-label text-mono-label text-tertiary-container hover:bg-white/5 transition-colors">BUMP TO DONE</button>
+</div>
+</div>
+</div>
+<!-- Column 3: Done -->
+<div class="flex flex-col h-full bg-surface-container-low/30 rounded-xl border border-white/5 p-4 backdrop-blur-md opacity-80">
+<div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
+<h3 class="font-mono-label text-mono-label text-on-surface tracking-widest flex items-center gap-2">
+<span class="w-2 h-2 rounded-sm bg-tertiary-container shadow-[0_0_8px_rgba(43,202,98,0.5)]"></span>
+                        READY
+                    </h3>
+<span class="font-mono-data text-mono-data text-on-surface-variant bg-surface-container px-2 py-0.5 rounded text-xs">1</span>
+</div>
+<div class="flex flex-col gap-4 overflow-y-auto kanban-scroll h-full pr-1 pb-10">
+<!-- Done Card -->
+<div class="bg-[rgba(255,255,255,0.01)] border border-white/5 rounded-lg p-4 backdrop-blur-xl cursor-default relative">
+<div class="flex justify-between items-start mb-3">
+<div class="font-mono-data text-mono-data text-on-surface-variant">#ORD-485</div>
+<span class="material-symbols-outlined text-tertiary-container text-sm" data-icon="check_circle">check_circle</span>
+</div>
+<ul class="font-body-sm text-body-sm text-on-surface-variant space-y-2 mb-2 opacity-50">
+<li>2x Iced Latte</li>
+<li>1x Matcha Roll</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

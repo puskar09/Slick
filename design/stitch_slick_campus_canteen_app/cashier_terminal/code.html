@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin Cashier Panel - SLICK</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800&amp;family=Inter:wght@300;400&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#d0bcff",
+                        "tertiary-fixed-dim": "#4ae176",
+                        "background": "#131313",
+                        "secondary-fixed": "#e9ddff",
+                        "error": "#ffb4ab",
+                        "on-secondary-container": "#c4abff",
+                        "primary-container": "#f59e0b",
+                        "on-primary": "#472a00",
+                        "inverse-surface": "#e5e2e1",
+                        "surface": "#131313",
+                        "primary-fixed": "#ffddb8",
+                        "on-secondary-fixed-variant": "#5516be",
+                        "on-surface-variant": "#d8c3ad",
+                        "on-primary-fixed": "#2a1700",
+                        "inverse-on-surface": "#313030",
+                        "on-surface": "#e5e2e1",
+                        "tertiary-container": "#2bca62",
+                        "on-primary-fixed-variant": "#653e00",
+                        "secondary-container": "#571bc1",
+                        "on-tertiary-fixed": "#002109",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-high": "#2a2a2a",
+                        "error-container": "#93000a",
+                        "surface-bright": "#3a3939",
+                        "inverse-primary": "#855300",
+                        "surface-tint": "#ffb95f",
+                        "on-secondary": "#3c0091",
+                        "on-error-container": "#ffdad6",
+                        "primary-fixed-dim": "#ffb95f",
+                        "surface-variant": "#353534",
+                        "on-primary-container": "#613b00",
+                        "primary": "#ffc174",
+                        "outline": "#a08e7a",
+                        "on-error": "#690005",
+                        "tertiary-fixed": "#6bff8f",
+                        "on-background": "#e5e2e1",
+                        "tertiary": "#51e77b",
+                        "on-tertiary-container": "#004f20",
+                        "surface-container-low": "#1c1b1b",
+                        "on-tertiary": "#003915",
+                        "on-secondary-fixed": "#23005c",
+                        "surface-container": "#201f1f",
+                        "on-tertiary-fixed-variant": "#005321",
+                        "secondary": "#d0bcff",
+                        "outline-variant": "#534434",
+                        "surface-container-highest": "#353534",
+                        "surface-dim": "#131313"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "margin": "32px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["inter"],
+                        "mono-label": ["jetbrainsMono"],
+                        "headline-lg": ["epilogue"],
+                        "display-lg": ["epilogue"],
+                        "headline-lg-mobile": ["epilogue"],
+                        "mono-data": ["jetbrainsMono"],
+                        "body-md": ["inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "300" }],
+                        "mono-label": ["12px", { "lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "headline-lg": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-lg": ["72px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "800" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "mono-data": ["14px", { "lineHeight": "1.4", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Base terminal aesthetic styles */
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-surface');
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Subtle global gradient overylay to simulate screen depth without using an image texture */
+        .ambient-glow {
+            background: radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.03) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* Glassmorphic Utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Hide scrollbar for clean terminal look */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="flex h-screen w-full overflow-hidden relative">
+<div class="absolute inset-0 ambient-glow z-0"></div>
+<!-- NavigationDrawer (Desktop) -->
+<nav class="hidden md:flex flex-col h-full w-64 fixed left-0 top-0 z-40 bg-surface-container-lowest border-r border-white/10 py-margin">
+<div class="px-gutter mb-8">
+<span class="font-mono-label text-mono-label text-primary font-bold tracking-[0.2em] uppercase">ADMIN TERMINAL</span>
+</div>
+<ul class="flex flex-col flex-1 gap-1 w-full">
+<li>
+<a class="flex items-center gap-3 text-on-surface-variant pl-4 py-3 hover:bg-white/5 hover:text-on-surface transition-all font-mono-data text-mono-data w-full" href="#">
+<span class="material-symbols-outlined text-[18px]">dashboard</span>
+<span>DASHBOARD</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-primary border-l-2 border-primary bg-primary/5 pl-4 py-3 font-mono-data text-mono-data w-full" href="#">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">point_of_sale</span>
+<span>CASHIER</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-on-surface-variant pl-4 py-3 hover:bg-white/5 hover:text-on-surface transition-all font-mono-data text-mono-data w-full" href="#">
+<span class="material-symbols-outlined text-[18px]">soup_kitchen</span>
+<span>KITCHEN</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-on-surface-variant pl-4 py-3 hover:bg-white/5 hover:text-on-surface transition-all font-mono-data text-mono-data w-full" href="#">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+<span>INVENTORY</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-on-surface-variant pl-4 py-3 hover:bg-white/5 hover:text-on-surface transition-all font-mono-data text-mono-data w-full" href="#">
+<span class="material-symbols-outlined text-[18px]">analytics</span>
+<span>REPORTS</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col w-full md:ml-64 h-full relative z-10 overflow-y-auto">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center px-gutter w-full h-16 sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-white/10">
+<button class="text-on-surface-variant hover:text-primary-fixed-dim transition-colors active:scale-95 transition-transform">
+<span class="material-symbols-outlined">terminal</span>
+</button>
+<span class="font-headline-lg-mobile text-headline-lg-mobile tracking-tighter text-primary">SLICK</span>
+<button class="text-on-surface-variant hover:text-primary-fixed-dim transition-colors active:scale-95 transition-transform">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</header>
+<!-- Canvas -->
+<div class="p-4 md:p-gutter pb-32 max-w-container-max mx-auto w-full flex flex-col gap-6">
+<!-- Context Header -->
+<div class="flex items-center justify-between mt-4">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(245,158,11,0.6)] animate-pulse"></div>
+<h1 class="font-mono-label text-mono-label text-on-surface tracking-[0.2em] uppercase">Awaiting Settlement</h1>
+</div>
+<div class="font-mono-data text-mono-data text-on-surface-variant">
+<span class="opacity-50">NODE:</span> TRM-01
+                </div>
+</div>
+<!-- Dense Data Table Container (Glassmorphic) -->
+<div class="glass-panel rounded-xl overflow-hidden w-full relative">
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left border-collapse whitespace-nowrap md:whitespace-normal">
+<thead>
+<tr class="border-b border-white/10 bg-white/[0.01]">
+<th class="font-mono-label text-mono-label text-on-surface-variant py-4 px-6 tracking-wider w-32">TOKEN ID</th>
+<th class="font-mono-label text-mono-label text-on-surface-variant py-4 px-6 tracking-wider">ORDER MANIFEST</th>
+<th class="font-mono-label text-mono-label text-on-surface-variant py-4 px-6 tracking-wider text-right w-32">AMOUNT</th>
+<th class="font-mono-label text-mono-label text-on-surface-variant py-4 px-6 tracking-wider text-center w-32">ACTION</th>
+</tr>
+</thead>
+<tbody class="font-mono-data text-mono-data">
+<!-- Row 1 -->
+<tr class="group border-b border-white/5 hover:bg-primary/5 transition-colors duration-200 cursor-default relative">
+<!-- Hover highlight bar -->
+<td class="absolute left-0 top-0 bottom-0 w-1 bg-primary opacity-0 group-hover:opacity-100 transition-opacity"></td>
+<td class="py-4 px-6 text-on-surface group-hover:text-primary transition-colors">
+<div class="flex items-center gap-2">
+<span class="opacity-50">#</span>TKN-8821
+                                    </div>
+</td>
+<td class="py-4 px-6 text-on-surface-variant">
+<div class="flex flex-col gap-1">
+<span class="text-on-surface">2x Soba Noodle Bowl, 1x Matcha Latte</span>
+<span class="text-[11px] opacity-40">Tbl 04 • 14:22 PST</span>
+</div>
+</td>
+<td class="py-4 px-6 text-right text-on-surface font-medium">
+                                    $42.50
+                                </td>
+<td class="py-4 px-6 text-center">
+<button class="bg-tertiary/10 text-tertiary border border-tertiary/30 hover:bg-tertiary hover:text-on-tertiary px-4 py-2 rounded-DEFAULT font-mono-label text-mono-label transition-all active:scale-95 flex items-center justify-center gap-2 w-full shadow-[0_0_15px_rgba(81,231,123,0.1)]">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+                                        MARK PAID
+                                    </button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="group border-b border-white/5 hover:bg-primary/5 transition-colors duration-200 cursor-default relative">
+<td class="absolute left-0 top-0 bottom-0 w-1 bg-primary opacity-0 group-hover:opacity-100 transition-opacity"></td>
+<td class="py-4 px-6 text-on-surface group-hover:text-primary transition-colors">
+<div class="flex items-center gap-2">
+<span class="opacity-50">#</span>TKN-8822
+                                    </div>
+</td>
+<td class="py-4 px-6 text-on-surface-variant">
+<div class="flex flex-col gap-1">
+<span class="text-on-surface">1x Wagyu Donburi, 2x Yuzu Soda</span>
+<span class="text-[11px] opacity-40">Tbl 12 • 14:25 PST</span>
+</div>
+</td>
+<td class="py-4 px-6 text-right text-on-surface font-medium">
+                                    $68.00
+                                </td>
+<td class="py-4 px-6 text-center">
+<button class="bg-tertiary/10 text-tertiary border border-tertiary/30 hover:bg-tertiary hover:text-on-tertiary px-4 py-2 rounded-DEFAULT font-mono-label text-mono-label transition-all active:scale-95 flex items-center justify-center gap-2 w-full shadow-[0_0_15px_rgba(81,231,123,0.1)]">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+                                        MARK PAID
+                                    </button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="group border-b border-transparent hover:bg-primary/5 transition-colors duration-200 cursor-default relative">
+<td class="absolute left-0 top-0 bottom-0 w-1 bg-primary opacity-0 group-hover:opacity-100 transition-opacity"></td>
+<td class="py-4 px-6 text-on-surface group-hover:text-primary transition-colors">
+<div class="flex items-center gap-2">
+<span class="opacity-50">#</span>TKN-8824
+                                    </div>
+</td>
+<td class="py-4 px-6 text-on-surface-variant">
+<div class="flex flex-col gap-1">
+<span class="text-on-surface">3x Edamame, 1x House Sake (Carafe)</span>
+<span class="text-[11px] opacity-40">Bar 02 • 14:30 PST</span>
+</div>
+</td>
+<td class="py-4 px-6 text-right text-on-surface font-medium">
+                                    $35.00
+                                </td>
+<td class="py-4 px-6 text-center">
+<button class="bg-tertiary/10 text-tertiary border border-tertiary/30 hover:bg-tertiary hover:text-on-tertiary px-4 py-2 rounded-DEFAULT font-mono-label text-mono-label transition-all active:scale-95 flex items-center justify-center gap-2 w-full shadow-[0_0_15px_rgba(81,231,123,0.1)]">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+                                        MARK PAID
+                                    </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Terminal Output Decorative Element -->
+<div class="font-mono-label text-mono-label text-on-surface-variant/40 mt-8">
+                &gt; LISTENING ON PORT 8080...<br/>
+                &gt; 3 PENDING TRANSACTIONS SYNCED.<br/>
+                &gt; _
+            </div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe bg-background/80 backdrop-blur-xl border-t border-white/10">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-90 w-16" href="#">
+<span class="material-symbols-outlined mb-1">restaurant_menu</span>
+<span class="font-mono-label text-mono-label text-[10px]">MENU</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary bg-primary/10 rounded-xl py-1 px-3 active:scale-90 transition-transform w-20" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+<span class="font-mono-label text-mono-label text-[10px]">ORDERS</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-90 w-16" href="#">
+<span class="material-symbols-outlined mb-1">view_list</span>
+<span class="font-mono-label text-mono-label text-[10px]">QUEUE</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-90 w-16" href="#">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="font-mono-label text-mono-label text-[10px]">PROFILE</span>
+</a>
+</nav>
+</body></html>
