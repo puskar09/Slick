@@ -4,15 +4,80 @@ import { UtensilsCrossed } from 'lucide-react';
 import { useCartStore } from '../store/useCartStore';
 import { useAuthStore } from '../store/useAuthStore';
 import LoginModal from './LoginModal';
+import { apiClient } from '../api/client';
+
+const BANNER_STATUS = {
+  pending: { text: '⏳ Order #{token} — Waiting for payment', color: '#737373', bg: 'rgba(115,115,115,0.1)', pulse: false },
+  paid: { text: '🔥 Order #{token} — Being prepared', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)', pulse: true },
+  preparing: { text: '🔥 Order #{token} — Being prepared', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)', pulse: true },
+  ready: { text: '✅ Order #{token} — Ready for Pickup!', color: '#22c55e', bg: 'rgba(34,197,94,0.12)', pulse: true },
+  picked_up: { text: null, color: null, bg: null, pulse: false },
+};
 
 export default function StudentHeader() {
   const cartCount = useCartStore((s) => s.getCount());
+  const lastToken = useCartStore((s) => s.lastToken);
+  const setLastToken = useCartStore((s) => s.setLastToken);
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const [showLogin, setShowLogin] = useState(false);
+  const [bannerOrder, setBannerOrder] = useState(null);
+  const pollRef = useRef(null);
+
+  useEffect(() => {
+    if (!lastToken) {
+      setBannerOrder(null);
+      clearInterval(pollRef.current);
+      return;
+    }
+
+    const fetchBanner = () => {
+      apiClient.get(`/orders/${lastToken}`).then((r) => {
+        const order = r.data;
+        const status = order.status?.toLowerCase();
+        if (status === 'picked_up') {
+          setLastToken(null);
+          setBannerOrder(null);
+          clearInterval(pollRef.current);
+        } else {
+          setBannerOrder(order);
+        }
+      }).catch(() => {});
+    };
+
+    fetchBanner();
+    pollRef.current = setInterval(fetchBanner, 5000);
+
+    return () => clearInterval(pollRef.current);
+  }, [lastToken]);
+
+  const bannerCfg = bannerOrder ? (BANNER_STATUS[bannerOrder.status?.toLowerCase()] || BANNER_STATUS.pending) : null;
 
   return (
     <>
+      {bannerCfg && bannerOrder && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          className="w-full border-b border-white/5 py-2.5 px-4 flex items-center justify-center gap-3"
+          style={{ background: bannerCfg.bg }}
+        >
+          <span className="text-sm font-semibold" style={{ color: bannerCfg.color }}>
+            {bannerCfg.text.replace('{token}', bannerOrder.token)}
+          </span>
+          {bannerCfg.pulse && (
+            <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: bannerCfg.color }} />
+          )}
+          <a
+            href="#/student/status"
+            className="text-xs font-bold px-3 py-1 rounded-full transition-all hover:brightness-110"
+            style={{ background: bannerCfg.color, color: '#000' }}
+          >
+            Track →
+          </a>
+        </motion.div>
+      )}
+
       <motion.header
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

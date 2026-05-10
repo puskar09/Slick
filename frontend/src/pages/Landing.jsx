@@ -1,17 +1,58 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UtensilsCrossed } from 'lucide-react';
 import PageTransition from '../components/PageTransition';
+import { useCartStore } from '../store/useCartStore';
+import { apiClient } from '../api/client';
 
 const ACCESS_CODES = {
   '0000': '#/student/menu',
   '1111': '#/admin/cashier',
 };
 
+const BANNER_STATUS = {
+  pending: { text: '⏳ Order #{token} — Waiting for payment', color: '#737373', bg: 'rgba(115,115,115,0.1)', pulse: false },
+  paid: { text: '🔥 Order #{token} — Being prepared', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)', pulse: true },
+  preparing: { text: '🔥 Order #{token} — Being prepared', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)', pulse: true },
+  ready: { text: '✅ Order #{token} — Ready for Pickup!', color: '#22c55e', bg: 'rgba(34,197,94,0.12)', pulse: true },
+  picked_up: { text: null, color: null, bg: null, pulse: false },
+};
+
 export default function Landing() {
   const [showInput, setShowInput] = useState(false);
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
+  const lastToken = useCartStore((s) => s.lastToken);
+  const setLastToken = useCartStore((s) => s.setLastToken);
+  const [activeOrder, setActiveOrder] = useState(null);
+  const pollRef = useRef(null);
+
+  useEffect(() => {
+    if (!lastToken) {
+      setActiveOrder(null);
+      clearInterval(pollRef.current);
+      return;
+    }
+
+    const fetchActive = () => {
+      apiClient.get(`/orders/${lastToken}`).then((r) => {
+        const order = r.data;
+        const status = order.status?.toLowerCase();
+        if (status === 'picked_up') {
+          setLastToken(null);
+          setActiveOrder(null);
+          clearInterval(pollRef.current);
+        } else {
+          setActiveOrder(order);
+        }
+      }).catch(() => {});
+    };
+
+    fetchActive();
+    pollRef.current = setInterval(fetchActive, 5000);
+
+    return () => clearInterval(pollRef.current);
+  }, [lastToken]);
 
   const handleSubmit = () => {
     if (ACCESS_CODES[code]) {
@@ -23,6 +64,8 @@ export default function Landing() {
       setError('Invalid Access Code');
     }
   };
+
+  const bannerCfg = activeOrder ? (BANNER_STATUS[activeOrder.status?.toLowerCase()] || BANNER_STATUS.pending) : null;
 
   return (
     <PageTransition>
@@ -135,6 +178,41 @@ export default function Landing() {
             </motion.div>
           )}
         </div>
+
+        <AnimatePresence>
+          {bannerCfg && activeOrder && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full max-w-sm px-4"
+            >
+              <div
+                className="rounded-2xl p-5 text-center"
+                style={{ background: 'rgba(255,255,255,0.06)', border: `1px solid ${bannerCfg.color}40` }}
+              >
+                <p className="text-sm font-semibold mb-3" style={{ color: bannerCfg.color }}>
+                  You have an active order #{activeOrder.token}
+                </p>
+                <div className="flex gap-2 justify-center">
+                  <a
+                    href="#/student/status"
+                    className="flex-1 py-2.5 rounded-xl font-bold text-sm text-black transition-all hover:brightness-110"
+                    style={{ background: bannerCfg.color }}
+                  >
+                    Track Order
+                  </a>
+                  <a
+                    href="#/student/menu"
+                    className="px-4 py-2.5 rounded-xl font-semibold text-sm text-gray-400 hover:text-white transition-colors border border-white/10"
+                  >
+                    Browse Menu
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <style>{`
           @keyframes pulse {
