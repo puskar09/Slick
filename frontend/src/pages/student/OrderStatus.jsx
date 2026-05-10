@@ -1,35 +1,60 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { subscribeToOrders, apiClient } from '../../api/client';
+import { subscribeToOrders, apiClient, submitRating } from '../../api/client';
 import { useCartStore } from '../../store/useCartStore';
 import StudentHeader from '../../components/StudentHeader';
+import Toast from '../../components/Toast';
 
 const STATUS_CONFIG = {
-  PENDING: {
-    message: 'Waiting confirmation until paid.',
+  pending: {
+    message: 'Waiting for payment confirmation.',
     color: '#737373',
     bg: 'rgba(115,115,115,0.15)',
     pulse: false,
   },
-  PREPARING: {
-    message: 'Getting ready. (Estimated wait: 5 to 10 minutes)',
+  paid: {
+    message: 'Being prepared in kitchen.',
     color: '#f59e0b',
     bg: 'rgba(245,158,11,0.15)',
     pulse: true,
   },
-  READY: {
-    message: 'Already ready! Please pick up at the counter.',
+  preparing: {
+    message: 'Being prepared in kitchen.',
+    color: '#f59e0b',
+    bg: 'rgba(245,158,11,0.15)',
+    pulse: true,
+  },
+  ready: {
+    message: 'Ready for Pickup!',
     color: '#22c55e',
     bg: 'rgba(34,197,94,0.15)',
     pulse: true,
   },
-  PICKED_UP: {
-    message: 'Order completed.',
+  picked_up: {
+    message: 'Order completed',
     color: '#a3a3a3',
     bg: 'rgba(163,163,163,0.1)',
     pulse: false,
   },
 };
+
+const RATED_KEY = 'slick-rated-tokens';
+
+function getRatedTokens() {
+  try {
+    return JSON.parse(localStorage.getItem(RATED_KEY) || '[]');
+  } catch {
+    return [];
+  }
+}
+
+function markTokenRated(token) {
+  const rated = getRatedTokens();
+  if (!rated.includes(token)) {
+    rated.push(token);
+    localStorage.setItem(RATED_KEY, JSON.stringify(rated));
+  }
+}
 
 export default function OrderStatus() {
   const [order, setOrder] = useState(null);
@@ -37,11 +62,22 @@ export default function OrderStatus() {
   const [error, setError] = useState('');
   const [inputVal, setInputVal] = useState('');
   const [searched, setSearched] = useState(false);
+  const [ratedItems, setRatedItems] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
   const pollRef = useRef(null);
   const esRef = useRef(null);
+  const toastTimer = useRef(null);
+  const prevStatusRef = useRef(null);
 
   const lastToken = useCartStore((s) => s.lastToken);
   const setLastToken = useCartStore((s) => s.setLastToken);
+
+  const showToast = (msg) => {
+    setToastMsg(msg);
+    clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToastMsg(''), 3000);
+  };
 
   const fetchOrder = async (token) => {
     if (!token) return;
@@ -49,6 +85,11 @@ export default function OrderStatus() {
     setError('');
     try {
       const data = await apiClient.get(`/orders/${token}`).then((r) => r.data);
+      const newStatus = data.status;
+      if (prevStatusRef.current && prevStatusRef.current !== newStatus) {
+        console.log(`[OrderStatus] Status changed: ${prevStatusRef.current} → ${newStatus} for token ${token}`);
+      }
+      prevStatusRef.current = newStatus;
       setOrder(data);
     } catch {
       setError('Could not load order status. Try again.');
@@ -66,26 +107,31 @@ export default function OrderStatus() {
   }, []);
 
   useEffect(() => {
-    if (order?.status === 'PICKED_UP') {
+    if (!order?.token) return;
+
+    if (order?.status === 'picked_up') {
       clearInterval(pollRef.current);
       return;
     }
-    if (order?.token) {
-      pollRef.current = setInterval(() => fetchOrder(order.token), 3000);
-    }
+
+    clearInterval(pollRef.current);
+    pollRef.current = setInterval(() => fetchOrder(order.token), 2000);
+
     return () => clearInterval(pollRef.current);
-  }, [order?.token, order?.status]);
+  }, [order?.token]);
 
   useEffect(() => {
     esRef.current = subscribeToOrders((data) => {
       if (!Array.isArray(data) || !order?.token) return;
       const updated = data.find((o) => o.token === order.token);
       if (updated && updated.status !== order.status) {
+        console.log(`[OrderStatus] SSE update received: token=${order.token}, old=${order.status}, new=${updated.status}`);
+        prevStatusRef.current = updated.status;
         setOrder(updated);
       }
     });
     return () => esRef.current?.close();
-  }, [order?.token]);
+  }, [order?.token, order?.status]);
 
   const handleSearch = () => {
     const t = parseInt(inputVal);
@@ -93,10 +139,31 @@ export default function OrderStatus() {
     setLastToken(t);
     setSearched(true);
     setOrder(null);
+    setRatedItems({});
+    prevStatusRef.current = null;
     fetchOrder(t);
   };
 
-  const cfg = order ? (STATUS_CONFIG[order.status] || STATUS_CONFIG.PENDING) : null;
+  const handleRate = async (menuItemId, itemName, rating) => {
+    if (!order?.token || submitting) return;
+    setSubmitting(true);
+    try {
+      const payload = { menu_item_id: menuItemId, token_number: order.token, rating, name: itemName };
+      await submitRating(payload.menu_item_id, payload.token_number, rating, payload.name);
+      setRatedItems((prev) => ({ ...prev, [itemName]: rating }));
+      markTokenRated(order.token);
+    } catch (e) {
+      console.error('Rating failed:', e);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const cfg = order ? (STATUS_CONFIG[order.status?.toLowerCase()] || STATUS_CONFIG.pending) : null;
+  const isPickedUp = order?.status?.toLowerCase() === 'picked_up';
+  const ratedTokens = getRatedTokens();
+  const alreadyRated = isPickedUp && ratedTokens.includes(order?.token);
+  const allItemsRated = order?.items?.length > 0 && order.items.every((item) => ratedItems[item.name || item] !== undefined);
 
   return (
     <div className="min-h-svh flex flex-col" style={{ background: '#0a0a0a' }}>
@@ -204,6 +271,71 @@ export default function OrderStatus() {
           )}
         </AnimatePresence>
 
+        <AnimatePresence>
+          {isPickedUp && !loading && order && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="rounded-2xl p-6 mt-4"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+            >
+              {alreadyRated && allItemsRated ? (
+                <div className="text-center py-2">
+                  <p className="text-amber-accent font-bold text-base mb-1">Thanks for your feedback! ⭐</p>
+                  <p className="text-gray-500 text-sm">Your ratings help us improve.</p>
+                </div>
+              ) : (
+                <>
+                  <p className="text-white font-bold text-base mb-4 text-center">How was your order?</p>
+                  <div className="space-y-3">
+                    {(order.items || []).map((item, idx) => {
+                      const itemName = item.name || item;
+                      const menuItemId = item.menu_item_id || 0;
+                      const existing = ratedItems[itemName];
+                      return (
+                        <div key={idx} className="flex items-center justify-between">
+                          <span className="text-gray-300 text-sm">{itemName}</span>
+                          <div className="flex gap-2">
+                            <motion.button
+                              whileHover={{ scale: 1.15 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() => handleRate(menuItemId, itemName, 1)}
+                              disabled={submitting || existing !== undefined}
+                              className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg transition-all ${
+                                existing === 1
+                                  ? 'bg-green-500 text-white'
+                                  : 'hover:bg-green-500/20 text-green-400'
+                              }`}
+                              style={existing === 1 ? {} : { background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}
+                            >
+                              👍
+                            </motion.button>
+                            <motion.button
+                              whileHover={{ scale: 1.15 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() => handleRate(menuItemId, itemName, 0)}
+                              disabled={submitting || existing !== undefined}
+                              className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg transition-all ${
+                                existing === 0
+                                  ? 'bg-red-500 text-white'
+                                  : 'hover:bg-red-500/20 text-red-400'
+                              }`}
+                              style={existing === 0 ? {} : { background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}
+                            >
+                              👎
+                            </motion.button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {!loading && !order && !error && !searched && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -214,6 +346,10 @@ export default function OrderStatus() {
           </motion.div>
         )}
       </div>
+
+      <AnimatePresence>
+        {toastMsg && <Toast message={toastMsg} />}
+      </AnimatePresence>
     </div>
   );
 }

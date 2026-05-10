@@ -92,5 +92,28 @@ class OrderListResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class RatingCreate(BaseModel):
+    menu_item_id: int = Field(ge=0)
+    token_number: int
+    rating: int = Field(ge=0, le=1)
+    name: Optional[str] = None
+
+
+class RatingResponse(BaseModel):
+    id: int
+    menu_item_id: int
+    rating: int
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class RatingSummary(BaseModel):
+    menu_item_id: int
+    thumbs_up: int
+    thumbs_down: int
+    total: int
+
+
 class StatusUpdate(BaseModel):
     status: str

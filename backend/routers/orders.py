@@ -102,7 +102,7 @@ def create_order(
     token = get_next_token(db)
     total = order.total if order.total is not None else sum(item.price * item.item_qty for item in order.items)
     response_items = [
-        {"name": item.name, "qty": item.item_qty, "price": item.price}
+        {"menu_item_id": item.menu_item_id, "name": item.name, "qty": item.item_qty, "price": item.price}
         for item in order.items
     ]
     payment_method = order.payment_method or "cash"
@@ -123,7 +123,7 @@ def create_order(
         token=db_order.token_number,
         status=db_order.status,
         total=db_order.total_amount,
-        items=[OrderItem(name=i["name"], qty=i["qty"], price=i["price"]) for i in response_items],
+        items=[OrderItem(menu_item_id=i.get("menu_item_id"), name=i["name"], qty=i["qty"], price=i["price"]) for i in response_items],
         created_at=db_order.created_at
     )
     return result
@@ -169,8 +169,10 @@ def confirm_order(token: int, db: Session = Depends(get_db)):
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     current = order.status.lower()
+    if current == "picked_up":
+        raise HTTPException(status_code=400, detail="Order is already complete")
     if current != "pending":
-        raise HTTPException(status_code=400, detail="Order already confirmed or processed")
+        return {"message": "Order already processed", "status": order.status, "token": order.token_number, "current_status": current}
     order.status = "preparing"
     db.commit()
     db.refresh(order)

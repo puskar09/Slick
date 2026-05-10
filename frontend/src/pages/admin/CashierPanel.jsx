@@ -2,13 +2,22 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { subscribeToOrders, confirmPayment, getOrders } from '../../api/client';
 import AdminHeader from '../../components/AdminHeader';
+import Toast from '../../components/Toast';
 
 export default function CashierPanel() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [confirming, setConfirming] = useState(null);
+  const [toastMsg, setToastMsg] = useState('');
+  const toastTimer = useRef(null);
   const esRef = useRef(null);
   const pollRef = useRef(null);
+
+  const showToast = (msg) => {
+    setToastMsg(msg);
+    clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToastMsg(''), 3000);
+  };
 
   const loadOrders = async () => {
     try {
@@ -40,16 +49,18 @@ export default function CashierPanel() {
 
   const handleConfirm = async (token) => {
     if (confirming !== null) return;
-    console.log('Confirming token:', token);
     setConfirming(token);
+    setOrders((prev) =>
+      prev.map((o) => o.token === token ? { ...o, status: 'preparing', _pending: true } : o)
+    );
     try {
-      const result = await confirmPayment(token);
-      console.log('Confirm result:', result);
-      setOrders((prev) => prev.filter((o) => o.token !== token));
-      alert('Order confirmed! Token #' + token + ' sent to kitchen.');
+      await confirmPayment(token);
+      showToast(`Token #${token} sent to kitchen`);
     } catch (e) {
-      console.error('Confirm payment failed:', e);
-      alert('Failed to confirm order: ' + (e?.response?.data?.detail || e.message || 'Unknown error'));
+      setOrders((prev) =>
+        prev.map((o) => o.token === token ? { ...o, status: 'pending', _pending: false } : o)
+      );
+      showToast(e?.response?.data?.detail || 'Failed to confirm order');
     } finally {
       setConfirming(null);
     }
@@ -123,20 +134,30 @@ export default function CashierPanel() {
                     <span className="text-2xl font-bold text-amber-accent">₹{order.total_amount}</span>
                   </div>
 
-                  <button
-                    onClick={() => handleConfirm(order.token)}
-                    disabled={confirming === order.token}
-                    className="w-full py-3 rounded-xl font-bold text-sm text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                    style={{ background: confirming === order.token ? '#b45309' : '#f59e0b' }}
-                  >
-                    {confirming === order.token ? 'Confirming...' : 'Confirm Payment'}
-                  </button>
+                  {order._pending ? (
+                    <div className="text-center py-3">
+                      <span className="text-green-400 text-sm font-semibold">✓ Sent to kitchen</span>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => handleConfirm(order.token)}
+                      disabled={confirming === order.token}
+                      className="w-full py-3 rounded-xl font-bold text-sm text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                      style={{ background: confirming === order.token ? '#b45309' : '#f59e0b' }}
+                    >
+                      {confirming === order.token ? 'Confirming...' : 'Confirm Payment'}
+                    </button>
+                  )}
                 </motion.div>
               ))}
             </AnimatePresence>
           </div>
         )}
       </div>
+
+      <AnimatePresence>
+        {toastMsg && <Toast message={toastMsg} />}
+      </AnimatePresence>
     </div>
   );
 }

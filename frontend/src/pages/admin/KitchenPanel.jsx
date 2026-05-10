@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { subscribeToOrders, markReady, markPickedUp, getOrders } from '../../api/client';
 import AdminHeader from '../../components/AdminHeader';
+import Toast from '../../components/Toast';
 
 function elapsed(ts) {
   if (!ts) return '0m';
@@ -11,7 +12,15 @@ function elapsed(ts) {
 
 export default function KitchenPanel() {
   const [orders, setOrders] = useState([]);
+  const [toastMsg, setToastMsg] = useState('');
+  const toastTimer = useRef(null);
   const esRef = useRef(null);
+
+  const showToast = (msg) => {
+    setToastMsg(msg);
+    clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToastMsg(''), 3000);
+  };
 
   useEffect(() => {
     const load = () => getOrders().then(setOrders).catch(console.error);
@@ -28,19 +37,31 @@ export default function KitchenPanel() {
   const ready = orders.filter((o) => o.status === 'ready');
 
   const handleReady = async (token) => {
+    setOrders((prev) =>
+      prev.map((o) => o.token === token ? { ...o, status: 'ready' } : o)
+    );
     try {
       await markReady(token);
-      const data = await getOrders();
-      setOrders(data);
-    } catch (e) { console.error(e); }
+      showToast(`Token #${token} marked ready`);
+    } catch (e) {
+      const data = await getOrders().catch(() => null);
+      if (data) setOrders(data);
+      showToast(e?.response?.data?.detail || 'Failed to mark ready');
+    }
   };
 
   const handlePickup = async (token) => {
+    setOrders((prev) =>
+      prev.map((o) => o.token === token ? { ...o, status: 'picked_up' } : o)
+    );
     try {
       await markPickedUp(token);
-      const data = await getOrders();
-      setOrders(data);
-    } catch (e) { console.error(e); }
+      showToast(`Token #${token} picked up`);
+    } catch (e) {
+      const data = await getOrders().catch(() => null);
+      if (data) setOrders(data);
+      showToast(e?.response?.data?.detail || 'Failed to mark picked up');
+    }
   };
 
   const renderCard = (order, type) => (
@@ -160,6 +181,10 @@ export default function KitchenPanel() {
           </div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {toastMsg && <Toast message={toastMsg} />}
+      </AnimatePresence>
     </div>
   );
 }

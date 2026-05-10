@@ -31,6 +31,16 @@ class MenuItem(Base):
     image_url = Column(String, nullable=True)
 
 
+class Rating(Base):
+    __tablename__ = "ratings"
+
+    id = Column(Integer, primary_key=True, index=True)
+    menu_item_id = Column(Integer, ForeignKey("menu_items.id"), nullable=False)
+    token_number = Column(Integer, nullable=False)
+    rating = Column(Integer, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 class Order(Base):
     __tablename__ = "orders"
 

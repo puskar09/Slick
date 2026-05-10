@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getMenu } from '../../api/client';
+import { getMenu, getRatingSummary } from '../../api/client';
 import { useCartStore } from '../../store/useCartStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import StudentHeader from '../../components/StudentHeader';
@@ -15,6 +15,7 @@ export default function Menu() {
   const [toastMsg, setToastMsg] = useState('');
   const [addedItems, setAddedItems] = useState({});
   const [showLogin, setShowLogin] = useState(false);
+  const [ratingSummary, setRatingSummary] = useState({});
   const toastTimer = useRef(null);
   const addedTimer = useRef({});
 
@@ -22,15 +23,18 @@ export default function Menu() {
   const user = useAuthStore((s) => s.user);
 
   useEffect(() => {
-    getMenu()
-      .then((data) => {
-        const menuItems = data.menu || data;
-        setItems(menuItems);
-        const cats = ['All', ...new Set(menuItems.map(item => item.category))];
-        setCategories(cats);
-      })
-      .catch(() => setItems([]))
-      .finally(() => setLoading(false));
+    Promise.all([
+      getMenu().catch(() => []),
+      getRatingSummary().catch(() => [])
+    ]).then(([menuData, ratingsData]) => {
+      const menuItems = menuData.menu || menuData;
+      setItems(menuItems);
+      const cats = ['All', ...new Set(menuItems.map(item => item.category))];
+      setCategories(cats);
+      const summary = {};
+      (ratingsData || []).forEach((r) => { summary[r.menu_item_id] = r; });
+      setRatingSummary(summary);
+    }).finally(() => setLoading(false));
   }, []);
 
   const showToast = useCallback((msg) => {
@@ -60,7 +64,6 @@ export default function Menu() {
       <StudentHeader />
 
       <div className="max-w-[1200px] mx-auto w-full px-4 md:px-12 py-10 flex-1 pb-24">
-        {/* Hero Section */}
         <div className="w-full mb-10 text-center mx-auto">
           <motion.h1
             initial={{ opacity: 0, y: -10 }}
@@ -80,7 +83,6 @@ export default function Menu() {
           </motion.p>
         </div>
 
-        {/* Category Chips */}
         <div className="mb-10 overflow-x-auto scrollbar-none">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -111,65 +113,78 @@ export default function Menu() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[24px]">
             <AnimatePresence mode="popLayout">
-              {filtered.map((item, idx) => (
-                <motion.article
-                  key={item.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ delay: idx * 0.05 }}
-                  className="group flex flex-col relative overflow-hidden bg-[#0a0a0a] min-h-[380px] rounded-t-none rounded-b-2xl transition-all duration-300"
-                  style={{
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                  }}
-                >
-                  <style>{`
-                    article:hover {
-                      transform: translateY(-4px);
-                      box-shadow: 0 10px 30px -10px rgba(245, 158, 11, 0.3);
-                      border-color: rgba(245, 158, 11, 0.2);
-                    }
-                  `}</style>
+              {filtered.map((item, idx) => {
+                const rating = ratingSummary[item.id];
+                const showRating = rating && rating.total > 3;
+                const thumbsUp = rating?.thumbs_up || 0;
+                const total = rating?.total || 0;
+                const isPopular = showRating && thumbsUp / total > 0.8;
 
-                  {/* Image Section */}
-                  <div className="relative h-[200px] w-full bg-[#111] overflow-hidden">
-                    <div className="absolute top-3 right-3 z-10 bg-black/60 backdrop-blur-md border border-white/10 text-white text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full">
-                      {item.category}
-                    </div>
-
-                    <img
-                      src={item.image_url}
-                      alt={item.name}
-                      loading="lazy"
-                      onError={(e) => e.target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400'}
-                      className="w-full h-[200px] object-cover transition-transform duration-500 group-hover:scale-105 rounded-t-none"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] to-transparent opacity-80" />
-                  </div>
-
-                  {/* Info Section */}
-                  <div className="p-[20px] flex flex-col flex-1">
-                    <h3 className="text-white font-bold text-[18px] leading-snug">{item.name}</h3>
-
-                    <div className="flex items-center gap-2 mt-[8px]">
-                      <span className="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,225,118,0.8)] animate-pulse"></span>
-                      <span className="text-amber-accent font-bold text-[16px]">₹{item.price}</span>
-                    </div>
-                  </div>
-
-                  {/* Add to Cart Button */}
-                  <button
-                    onClick={() => handleAdd(item)}
-                    className={`w-full h-[44px] text-black font-bold text-[15px] transition-colors rounded-t-none rounded-b-2xl flex items-center justify-center ${
-                      addedItems[item.id]
-                        ? 'bg-green-500 hover:bg-green-500'
-                        : 'bg-amber-accent hover:bg-amber-hover'
-                    }`}
+                return (
+                  <motion.article
+                    key={item.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ delay: idx * 0.05 }}
+                    className="group flex flex-col relative overflow-hidden bg-[#0a0a0a] min-h-[380px] rounded-t-none rounded-b-2xl transition-all duration-300"
+                    style={{
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                    }}
                   >
-                    {addedItems[item.id] ? '✓ Added!' : '+ Add to Cart'}
-                  </button>
-                </motion.article>
-              ))}
+                    <style>{`
+                      article:hover {
+                        transform: translateY(-4px);
+                        box-shadow: 0 10px 30px -10px rgba(245, 158, 11, 0.3);
+                        border-color: rgba(245, 158, 11, 0.2);
+                      }
+                    `}</style>
+
+                    <div className="relative h-[200px] w-full bg-[#111] overflow-hidden">
+                      {isPopular && (
+                        <div className="absolute top-3 left-3 z-10 bg-amber-accent text-black text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full">
+                          ⭐ Popular
+                        </div>
+                      )}
+                      <div className="absolute top-3 right-3 z-10 bg-black/60 backdrop-blur-md border border-white/10 text-white text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full">
+                        {item.category}
+                      </div>
+
+                      <img
+                        src={item.image_url}
+                        alt={item.name}
+                        loading="lazy"
+                        onError={(e) => e.target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400'}
+                        className="w-full h-[200px] object-cover transition-transform duration-500 group-hover:scale-105 rounded-t-none"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] to-transparent opacity-80" />
+                    </div>
+
+                    <div className="p-[20px] flex flex-col flex-1">
+                      <h3 className="text-white font-bold text-[18px] leading-snug">{item.name}</h3>
+
+                      <div className="flex items-center gap-2 mt-[8px]">
+                        <span className="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,225,118,0.8)] animate-pulse"></span>
+                        <span className="text-amber-accent font-bold text-[16px]">₹{item.price}</span>
+                        {showRating && thumbsUp > 0 && (
+                          <span className="text-gray-500 text-xs ml-1">👍 {thumbsUp}</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => handleAdd(item)}
+                      className={`w-full h-[44px] text-black font-bold text-[15px] transition-colors rounded-t-none rounded-b-2xl flex items-center justify-center ${
+                        addedItems[item.id]
+                          ? 'bg-green-500 hover:bg-green-500'
+                          : 'bg-amber-accent hover:bg-amber-hover'
+                      }`}
+                    >
+                      {addedItems[item.id] ? '✓ Added!' : '+ Add to Cart'}
+                    </button>
+                  </motion.article>
+                );
+              })}
             </AnimatePresence>
           </div>
         )}

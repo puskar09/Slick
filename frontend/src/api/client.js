@@ -62,3 +62,8 @@ export const confirmPayment = (token) => api.patch(`/orders/${token}/confirm`).t
 export const markReady = (token) => api.patch(`/orders/${token}/ready`).then((r) => r.data);
 
 export const markPickedUp = (token) => api.patch(`/orders/${token}/pickup`).then((r) => r.data);
+
+export const getRatingSummary = () => api.get('/ratings/summary').then((r) => r.data);
+
+export const submitRating = (menuItemId, tokenNumber, rating, name) =>
+  api.post('/ratings', { menu_item_id: menuItemId, token_number: tokenNumber, rating, name: name || null }).then((r) => r.data);
