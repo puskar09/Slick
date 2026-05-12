@@ -40,8 +40,9 @@ def _broadcast_orders():
 
 def get_next_token(db: Session) -> int:
     today = date.today()
+    today_start = datetime.combine(today, datetime.min.time())
     max_token = db.query(func.max(Order.token_number)).filter(
-        cast(Order.created_at, Date) == today
+        Order.created_at >= today_start
     ).scalar()
     return (max_token or 0) + 1
 
@@ -169,15 +170,17 @@ def confirm_order(token: int, db: Session = Depends(get_db)):
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     current = order.status.lower()
+    print(f"[confirm] Token #{token} — current status: '{current}'")
     if current == "picked_up":
         raise HTTPException(status_code=400, detail="Order is already complete")
     if current != "pending":
         return {"message": "Order already processed", "status": order.status, "token": order.token_number}
-    order.status = "preparing"
+    order.status = "paid"
     db.commit()
     db.refresh(order)
+    print(f"[confirm] Token #{token} — new status: '{order.status}'")
     _broadcast_orders()
-    return {"message": "Order confirmed", "status": order.status}
+    return {"message": "Order confirmed", "status": order.status, "token": order.token_number}
 
 
 @router.patch("/{token}/ready")
@@ -185,7 +188,7 @@ def mark_ready(token: int, db: Session = Depends(get_db)):
     order = db.query(Order).filter(Order.token_number == token).first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
-    if order.status != "preparing":
+    if order.status.lower() not in ("paid", "preparing"):
         raise HTTPException(status_code=400, detail="Invalid status transition")
     order.status = "ready"
     db.commit()

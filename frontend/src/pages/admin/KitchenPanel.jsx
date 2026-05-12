@@ -25,15 +25,8 @@ export default function KitchenPanel() {
 
   const loadOrders = () => {
     getOrders().then((data) => {
-      setOrders((prev) => {
-        const merged = [...prev, ...data];
-        const seen = new Set();
-        return merged.filter((o) => {
-          if (seen.has(o.token)) return false;
-          seen.add(o.token);
-          return true;
-        });
-      });
+      const unique = Array.from(new Map(data.map((o) => [o.token, o])).values());
+      setOrders(unique);
     }).catch(console.error);
   };
 
@@ -42,15 +35,8 @@ export default function KitchenPanel() {
 
     esRef.current = subscribeToOrders((data) => {
       if (Array.isArray(data)) {
-        setOrders((prev) => {
-          const merged = [...prev, ...data];
-          const seen = new Set();
-          return merged.filter((o) => {
-            if (seen.has(o.token)) return false;
-            seen.add(o.token);
-            return true;
-          });
-        });
+        const unique = Array.from(new Map(data.map((o) => [o.token, o])).values());
+        setOrders(unique);
       }
     });
 
@@ -62,8 +48,7 @@ export default function KitchenPanel() {
     };
   }, []);
 
-  const preparing = orders.filter((o) => o.status?.toLowerCase() === 'preparing');
-  const ready = orders.filter((o) => o.status?.toLowerCase() === 'ready');
+  const preparing = orders.filter((o) => ['paid', 'preparing'].includes(o.status?.toLowerCase()));
 
   const handleReady = async (token) => {
     setOrders((prev) =>
@@ -77,6 +62,7 @@ export default function KitchenPanel() {
       showToast(e?.response?.data?.detail || 'Failed to mark ready');
     }
   };
+  const ready = orders.filter((o) => o.status?.toLowerCase() === 'ready');
 
   const handlePickup = async (token) => {
     setOrders((prev) =>
@@ -103,7 +89,7 @@ export default function KitchenPanel() {
       style={{
         background: 'rgba(255,255,255,0.04)',
         border: '1px solid rgba(255,255,255,0.08)',
-        borderLeft: `4px solid ${type === 'preparing' ? '#f59e0b' : '#22c55e'}`
+        borderLeft: `4px solid ${type === 'paid' ? '#f59e0b' : '#22c55e'}`
       }}
     >
       <div className="flex items-start justify-between mb-4">
@@ -117,7 +103,7 @@ export default function KitchenPanel() {
           </p>
         ))}
       </div>
-      {type === 'preparing' ? (
+      {type === 'paid' ? (
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={() => handleReady(order.token)}
@@ -180,7 +166,7 @@ export default function KitchenPanel() {
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <AnimatePresence>
-                    {preparing.map((o) => renderCard(o, 'preparing'))}
+                    {preparing.map((o) => renderCard(o, 'paid'))}
                   </AnimatePresence>
                 </div>
               )}

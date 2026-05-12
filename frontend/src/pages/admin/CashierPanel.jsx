@@ -22,15 +22,8 @@ export default function CashierPanel() {
   const loadOrders = async () => {
     try {
       const data = await getOrders();
-      setOrders((prev) => {
-        const merged = [...prev, ...data];
-        const seen = new Set();
-        return merged.filter((o) => {
-          if (seen.has(o.token)) return false;
-          seen.add(o.token);
-          return true;
-        });
-      });
+      const unique = Array.from(new Map(data.map((o) => [o.token, o])).values());
+      setOrders(unique.filter((o) => o.status?.toLowerCase() === 'pending'));
     } catch (e) {
       console.error('Failed to load orders:', e);
     } finally {
@@ -43,15 +36,8 @@ export default function CashierPanel() {
 
     esRef.current = subscribeToOrders((data) => {
       if (Array.isArray(data)) {
-        setOrders((prev) => {
-          const merged = [...prev, ...data];
-          const seen = new Set();
-          return merged.filter((o) => {
-            if (seen.has(o.token)) return false;
-            seen.add(o.token);
-            return true;
-          });
-        });
+        const unique = Array.from(new Map(data.map((o) => [o.token, o])).values());
+        setOrders(unique.filter((o) => o.status?.toLowerCase() === 'pending'));
       }
     });
 
@@ -63,21 +49,17 @@ export default function CashierPanel() {
     };
   }, []);
 
-  const pending = orders.filter((o) => o.status?.toLowerCase() === 'pending');
+  const pending = orders;
 
   const handleConfirm = async (token) => {
     if (confirming !== null) return;
     setConfirming(token);
-    setOrders((prev) =>
-      prev.map((o) => o.token === token ? { ...o, status: 'preparing', _pending: true } : o)
-    );
+    setOrders((prev) => prev.filter((o) => o.token !== token));
     try {
       await confirmPayment(token);
       showToast(`Token #${token} sent to kitchen`);
     } catch (e) {
-      setOrders((prev) =>
-        prev.map((o) => o.token === token ? { ...o, status: 'pending', _pending: false } : o)
-      );
+      loadOrders();
       showToast(e?.response?.data?.detail || 'Failed to confirm order');
     } finally {
       setConfirming(null);
