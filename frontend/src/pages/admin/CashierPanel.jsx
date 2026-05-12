@@ -22,7 +22,15 @@ export default function CashierPanel() {
   const loadOrders = async () => {
     try {
       const data = await getOrders();
-      setOrders(data);
+      setOrders((prev) => {
+        const merged = [...prev, ...data];
+        const seen = new Set();
+        return merged.filter((o) => {
+          if (seen.has(o.token)) return false;
+          seen.add(o.token);
+          return true;
+        });
+      });
     } catch (e) {
       console.error('Failed to load orders:', e);
     } finally {
@@ -34,7 +42,17 @@ export default function CashierPanel() {
     loadOrders();
 
     esRef.current = subscribeToOrders((data) => {
-      if (Array.isArray(data)) setOrders(data);
+      if (Array.isArray(data)) {
+        setOrders((prev) => {
+          const merged = [...prev, ...data];
+          const seen = new Set();
+          return merged.filter((o) => {
+            if (seen.has(o.token)) return false;
+            seen.add(o.token);
+            return true;
+          });
+        });
+      }
     });
 
     pollRef.current = setInterval(loadOrders, 5000);
@@ -45,7 +63,7 @@ export default function CashierPanel() {
     };
   }, []);
 
-  const pending = orders.filter((o) => o.status === 'pending');
+  const pending = orders.filter((o) => o.status?.toLowerCase() === 'pending');
 
   const handleConfirm = async (token) => {
     if (confirming !== null) return;

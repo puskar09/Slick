@@ -15,6 +15,7 @@ export default function KitchenPanel() {
   const [toastMsg, setToastMsg] = useState('');
   const toastTimer = useRef(null);
   const esRef = useRef(null);
+  const pollRef = useRef(null);
 
   const showToast = (msg) => {
     setToastMsg(msg);
@@ -22,19 +23,47 @@ export default function KitchenPanel() {
     toastTimer.current = setTimeout(() => setToastMsg(''), 3000);
   };
 
+  const loadOrders = () => {
+    getOrders().then((data) => {
+      setOrders((prev) => {
+        const merged = [...prev, ...data];
+        const seen = new Set();
+        return merged.filter((o) => {
+          if (seen.has(o.token)) return false;
+          seen.add(o.token);
+          return true;
+        });
+      });
+    }).catch(console.error);
+  };
+
   useEffect(() => {
-    const load = () => getOrders().then(setOrders).catch(console.error);
-    load();
+    loadOrders();
 
     esRef.current = subscribeToOrders((data) => {
-      if (Array.isArray(data)) setOrders(data);
+      if (Array.isArray(data)) {
+        setOrders((prev) => {
+          const merged = [...prev, ...data];
+          const seen = new Set();
+          return merged.filter((o) => {
+            if (seen.has(o.token)) return false;
+            seen.add(o.token);
+            return true;
+          });
+        });
+      }
     });
 
-    return () => esRef.current?.close();
+    pollRef.current = setInterval(loadOrders, 3000);
+
+    return () => {
+      esRef.current?.close();
+      clearInterval(pollRef.current);
+    };
   }, []);
 
-  const preparing = orders.filter((o) => o.status === 'preparing');
-  const ready = orders.filter((o) => o.status === 'ready');
+  const preparing = orders.filter((o) => o.status?.toLowerCase() === 'preparing');
+  const ready = orders.filter((o) => o.status?.toLowerCase() === 'ready');
 
   const handleReady = async (token) => {
     setOrders((prev) =>
@@ -44,8 +73,7 @@ export default function KitchenPanel() {
       await markReady(token);
       showToast(`Token #${token} marked ready`);
     } catch (e) {
-      const data = await getOrders().catch(() => null);
-      if (data) setOrders(data);
+      loadOrders();
       showToast(e?.response?.data?.detail || 'Failed to mark ready');
     }
   };
@@ -58,8 +86,7 @@ export default function KitchenPanel() {
       await markPickedUp(token);
       showToast(`Token #${token} picked up`);
     } catch (e) {
-      const data = await getOrders().catch(() => null);
-      if (data) setOrders(data);
+      loadOrders();
       showToast(e?.response?.data?.detail || 'Failed to mark picked up');
     }
   };

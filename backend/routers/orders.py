@@ -172,7 +172,7 @@ def confirm_order(token: int, db: Session = Depends(get_db)):
     if current == "picked_up":
         raise HTTPException(status_code=400, detail="Order is already complete")
     if current != "pending":
-        return {"message": "Order already processed", "status": order.status, "token": order.token_number, "current_status": current}
+        return {"message": "Order already processed", "status": order.status, "token": order.token_number}
     order.status = "preparing"
     db.commit()
     db.refresh(order)
